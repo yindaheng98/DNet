@@ -6,27 +6,7 @@
 """
 import pika
 import pickle
-from ComputationCore import ComputationCore
-
-
-class ComputationRequest(object):
-    """
-    此类表示一个由传输层输入到计算层的计算请求接口
-    此类是一个抽象类，使用前请先实现push_result方法
-    """
-
-    def __init__(self, x, start_layer, exit_layer):
-        self.x = x
-        self.start_layer = start_layer
-        self.exit_layer = exit_layer
-
-    def push_result(self, ok, result):
-        """
-        此方法在ComputationUnit.start的循环中被调用
-        用于将ComputationUnit.compute的输出结果传回传输层
-        输入参数同ComputationUnit.compute的返回值
-        """
-        pass
+from .ComputationCore import ComputationCore
 
 
 class ComputationUnit(object):
@@ -45,8 +25,7 @@ class ComputationUnit(object):
         self.cc = cc
         if not isinstance(conn_params, pika.ConnectionParameters):
             raise TypeError("conn_params必须是pika.ConnectionParameters")
-        self.conn = pika.adapters.asyncio_connection.AsyncioConnection(
-            conn_params)
+        self.conn = pika.BlockingConnection(conn_params)
         self.channel = self.conn.channel()
         self.channel.queue_declare(queue=queue_name)
         self.queue_name = queue_name
@@ -55,13 +34,16 @@ class ComputationUnit(object):
         """处理请求的回调函数"""
         ch.basic_ack(delivery_tag=method.delivery_tag)
         req = pickle.loads(body)
+        print("[x] 收到计算请求%s" % props.correlation_id)
         ok, result = self.cc.compute(req.x, req.start_layer, req.exit_layer)
         data = pickle.dumps({"ok": ok, "result": result})
+        print("[x] 完成计算请求%s" % props.correlation_id)
         ch.basic_publish(exchange='',
                          routing_key=props.reply_to,
                          properties=pika.BasicProperties(
                              correlation_id=props.correlation_id),
                          body=str(data))
+        print("[x] 返回计算结果%s" % props.correlation_id)
 
     def start(self):
         """启动队列的运行"""
