@@ -60,4 +60,4 @@ class ComputationUnit(object):
             if not isinstance(req, ComputationRequest):
                 raise TypeError("ComputationQueue.pop的返回值必须是ComputationRequest的子类")
             ok, result = self.compute(req.x, req.start_layer, req.exit_layer)
-            req.put_result(ok, result)
+            req.push_result(ok, result)
