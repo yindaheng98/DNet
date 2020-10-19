@@ -4,7 +4,6 @@ import torch.nn.functional as F
 import torchvision
 import torch
 import time
-import zmq
 
 from math import log
 

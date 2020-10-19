@@ -4,9 +4,19 @@ import json
 import uuid
 import base64
 
+"""
+本文件是用于测试中间层和计算层之间连接客户端类，不是项目的正式内容
+其用途是按照ComputationUnit的格式向中间层RabbitMQ中发送数据，以测试其有效性
+"""
 
 class ComputationUnitClient(object):
+    """用于测试中间层和计算层之间连接客户端类"""
     def __init__(self, conn_params, queue_name='ComputationQueue'):
+        """
+        初始化RabbitMQ RPC连接
+        @params conn_params: RabbitMQ连接参数，是一个pika.ConnectionParameters
+        @params queue_name: 用于RPC传输的队列名
+        """
         if not isinstance(conn_params, pika.ConnectionParameters):
             raise TypeError("conn_params必须是pika.ConnectionParameters")
         self.conn = pika.BlockingConnection(conn_params)
@@ -26,6 +36,12 @@ class ComputationUnitClient(object):
             self.corr_ids[props.correlation_id] = body
 
     def call(self, x, start_layer):
+        """
+        向RabbitMQ中发送一条数据，发送完即退出，无阻塞
+        发送后相应的消息会计入一个列表
+        @params x
+        @params start_layer
+        """
         data = {"x": str(base64.b64encode(pickle.dumps(x)), "utf8"),
                 "start_layer": start_layer}
         req = json.dumps(data)
@@ -42,6 +58,7 @@ class ComputationUnitClient(object):
         print("[x] 发送计算请求%s" % corr_id)
 
     def wait(self):
+        """等待列表中的消息收到回应"""
         finish = False
         while not finish:
             self.conn.process_data_events()

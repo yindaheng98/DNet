@@ -54,19 +54,23 @@ class ComputationUnit(object):
         self.queue_name = queue_name
 
     def __callback(self, ch, method, props, body):
-        """处理请求的回调函数"""
-        ch.basic_ack(delivery_tag=method.delivery_tag) # 立即回复收到
+        """
+        处理请求的回调函数
+        TODO: 使用ProtoBuf进行数据编码
+        """
+        ch.basic_ack(delivery_tag=method.delivery_tag)  # 立即回复收到
         print("[x] 收到计算请求%s" % props.correlation_id)
-        req = json.loads(body) # 加载数据
-        req["x"] = pickle.loads(base64.b64decode(req["x"])) # 加载x
-        ok, result = self.cc.compute(req["x"], req["start_layer"]) # 执行计算
+        req = json.loads(body)  # 加载数据
+        req["x"] = pickle.loads(base64.b64decode(req["x"]))  # 加载x
+        ok, result = self.cc.compute(req["x"], req["start_layer"])  # 执行计算
         print("[x] 完成计算请求%s" % props.correlation_id)
         data = {}
         if ok:
-            data = result.numpy().to_list()
+            data = int(list(result.numpy())[0])
         else:
             x, start_layer = result
-            data = {"x": pickle.dumps(x), "start_layer": start_layer}
+            data = {"x": str(base64.b64encode(pickle.dumps(x)), "utf8"),
+                    "start_layer": int(start_layer)}
         res = json.dumps({"ok": ok, "result": data})
         ch.basic_publish(exchange='',
                          routing_key=props.reply_to,

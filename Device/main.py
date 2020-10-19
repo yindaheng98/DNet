@@ -45,7 +45,7 @@ if __name__ == "__main__":
         # 终端出口小于16且置信度低于阈值则发往边缘
         if inter_data is not False and prob.tolist()[0] < thres[device_exit-1]:
             print('prob=%f<%f, Send to RabbitMQ' % (prob.tolist()[0], thres[device_exit-1]))
-            client.call(inter_data, device_exit + 1)
+            client.call(inter_data, device_exit)
         else:
             print('prob=%f>%f, category=%s' % (prob.tolist()[0], thres[device_exit-1], category))
         if i > 2:
