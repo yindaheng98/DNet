@@ -28,22 +28,24 @@ thres = [0.85, 0.90, 0.90, 0.90,
          0.90, 0.90, 0.92, 0.90,
          0.90, 0.90, 0.90]
 
-# 测试集推断
-for i, (test_in, test_labels) in enumerate(testloader):
-    net.eval()
-    # test_in, test_labels = test_in.cuda(), test_labels.cuda()  # 数据载入GPU
-    start = time.time()
+if __name__ == "__main__":
 
-    # inception v3 第一分块推断
-    inter_data, outputs = net(test_in, device_exit)
+    # 测试集推断
+    for i, (test_in, test_labels) in enumerate(testloader):
+        net.eval()
+        # test_in, test_labels = test_in.cuda(), test_labels.cuda()  # 数据载入GPU
+        start = time.time()
 
-    # 取得分最大的类别，所为当前任务推断结果
-    prob, category = torch.max(outputs.data, 1)
+        # inception v3 第一分块推断
+        inter_data, outputs = net(test_in, device_exit)
 
-    # 终端出口小于16且置信度低于阈值则发往边缘
-    if inter_data is not False and prob.tolist()[0] < thres[device_exit-1]:
-        print('Send to RabbitMQ')
-        client.call(inter_data, device_exit + 1)
-    if i > 10:
-        break
-client.wait()
+        # 取得分最大的类别，所为当前任务推断结果
+        prob, category = torch.max(outputs.data, 1)
+
+        # 终端出口小于16且置信度低于阈值则发往边缘
+        if inter_data is not False and prob.tolist()[0] < thres[device_exit-1]:
+            print('Send to RabbitMQ')
+            client.call(inter_data, device_exit + 1)
+        if i > 10:
+            break
+    client.wait()

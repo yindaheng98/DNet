@@ -28,6 +28,7 @@
 import pika
 import pickle
 import json
+import base64
 from .ComputationCore import ComputationCore
 
 
@@ -57,8 +58,8 @@ class ComputationUnit(object):
         ch.basic_ack(delivery_tag=method.delivery_tag) # 立即回复收到
         print("[x] 收到计算请求%s" % props.correlation_id)
         req = json.loads(body) # 加载数据
-        req.x = pickle.loads(req.x) # 加载x
-        ok, result = self.cc.compute(req.x, req.start_layer) # 执行计算
+        req["x"] = pickle.loads(base64.b64decode(req["x"])) # 加载x
+        ok, result = self.cc.compute(req["x"], req["start_layer"]) # 执行计算
         print("[x] 完成计算请求%s" % props.correlation_id)
         data = {}
         if ok:
