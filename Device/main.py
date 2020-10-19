@@ -48,6 +48,6 @@ if __name__ == "__main__":
             client.call(inter_data, device_exit + 1)
         else:
             print('prob=%f>%f, category=%s' % (prob.tolist()[0], thres[device_exit-1], category))
-        if i > 10:
+        if i > 2:
             break
     client.wait()
