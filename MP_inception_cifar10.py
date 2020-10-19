@@ -3,6 +3,7 @@ import torchvision.transforms as transforms
 import torch.nn.functional as F
 import torchvision
 import torch
+import time
 
 from math import log
 
@@ -34,7 +35,8 @@ class Inception_v3_cifar10(nn.Module):
         self.fc = nn.Linear(2048, num_classes)
         self.exits = make_exits(exits, exits_num=15)
 
-    def forward(self, x, edge_exit, start_layer=1):
+    def forward(self, x, device_exit=1, train_exit=False):
+
         if self.transform_input:
             x = x.clone()
             x[:, 0] = x[:, 0] * (0.229 / 0.5) + (0.485 - 0.5) / 0.5
@@ -47,12 +49,12 @@ class Inception_v3_cifar10(nn.Module):
                   self.Mixed_6c, self.Mixed_6d, self.Mixed_6e, self.Mixed_7a,
                   self.Mixed_7b, self.Mixed_7c]
 
-        for i in range(start_layer, edge_exit):
+        for i in range(device_exit):
             x = layers[i](x)
             if i == 2 or i == 4:
                 x = F.max_pool2d(x, kernel_size=3, stride=1)
-        if edge_exit < 16:
-            eid = (edge_exit-1)*4
+        if device_exit < 16:
+            eid = (device_exit-1)*4
             ex = self.exits[eid](x)
             ex = ex.view(ex.size(0), -1)
             ex = self.exits[eid+1:eid+4](ex)
@@ -322,5 +324,56 @@ def cifar10(batch=128, train=True):
         return testloader, testset
 
 
+def cal_entropy(data):
+    entropy = []
+    for x in data.tolist():
+        e = 0
+        for y in x:
+            if y > 0:
+                e -= y * log(1.0*y)
+        entropy.append(e)
+    return entropy
+
+
+def test():
+    testloader, testset = cifar10(batch=1, train=False)
+    print('data loaded.')
+    net = Inception_v3_cifar10().cuda()
+    print('inception is ready.')
+    SAVE_PATH = './model/multi-exit-inception-v3-cifar10-epoch53-loss' \
+                '[1.3173, 1.1656, 1.0338, 0.9108, 0.8609, 0.7042, 0.7072, ' \
+                '0.7405, 0.714, 0.4511, 0.3439, 0.2177, 0.0095, 0.006, 0.0028].pkl'
+    net.load_state_dict(torch.load(SAVE_PATH))
+    print('model loaded.')
+    avr_time = 0.0
+    te_correct = 0
+    num_exit = [0 for i in range(16)]
+
+    for j in range(5):
+        cmp_time = 0.0
+        for i, (test_in, test_labels) in enumerate(testloader):
+            net.eval()
+            test_in, test_labels = test_in.cuda(), test_labels.cuda()
+            start = time.time()
+            eid, outputs = net(test_in)
+            end = time.time()
+            cmp_time += end-start
+            num_exit[eid-1] += 1
+            predicted = torch.max(outputs.data, 1)[1]
+            te_correct += torch.sum(predicted == test_labels).item()
+            # if (i+1) % 1000 == 0:
+            #     print('avrtime=', cmp_time/1000)
+            #     break
+            # print('size=', i+1, ' acc=', te_correct/(i+1))
+            # print([e/(i+1) for e in num_exit])
+
+        te_size = len(testset)
+        te_acc = te_correct / te_size
+        avr_time += cmp_time
+        exit_rate = [e / (te_size*(j+1)) for e in num_exit]
+        print('#%d computing time per sample: %.3f ms, acc: %.4f, exit rate:'
+              % (j, cmp_time * 1000 / te_size, te_acc / (j + 1)), exit_rate)
+        print('   Average: %.3f ms, acc: %.4f, exit rate:'
+              % (avr_time/((j+1)*10), te_acc / (j + 1)), exit_rate)
 
 

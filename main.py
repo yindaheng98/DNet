@@ -16,6 +16,5 @@ net.load_state_dict(torch.load(SAVE_PATH, map_location='cpu'))
 thres = [0.85, 0.90, 0.90, 0.90, 0.90,
          0.90, 0.90, 0.90, 0.90, 0.90,
          0.92, 0.90, 0.90, 0.90, 0.90]
-net.eval()
 cu = ComputationUnit(ComputationCore(net, thres, 10), conn_params)
 cu.start()

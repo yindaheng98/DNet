@@ -25,7 +25,7 @@ class ComputationUnitClient(object):
             self.corr_ids[props.correlation_id] = body
 
     def call(self, x, start_layer):
-        data = {"x": pickle.dumps(x), "start_layer": start_layer}
+        data = {"x": str(pickle.dumps(x)), "start_layer": start_layer}
         req = json.dumps(data)
         corr_id = str(uuid.uuid4())
         self.corr_ids[corr_id] = ""

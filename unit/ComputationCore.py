@@ -49,6 +49,7 @@ class ComputationCore(object):
         """
 
         # 执行推断
+        self.net.eval()
         x, outputs = self.net(x, exit_layer, start_layer)
         # TODO: 如果需要更加通用的计算层，最好研究出一个抽象的DDNN网络计算单元（就像torch.nn.Module那样）
 
