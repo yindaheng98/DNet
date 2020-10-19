@@ -17,5 +17,5 @@ thres = [0.85, 0.90, 0.90, 0.90, 0.90,
          0.90, 0.90, 0.90, 0.90, 0.90,
          0.92, 0.90, 0.90, 0.90, 0.90]
 net.eval()
-cu = ComputationUnit(ComputationCore(net, thres), conn_params)
+cu = ComputationUnit(ComputationCore(net, thres, 10), conn_params)
 cu.start()
