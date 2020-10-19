@@ -18,7 +18,7 @@ net = Inception_v3_cifar10()
 print('Multi-exit Inception is ready.')
 
 # 加载模型
-SAVE_PATH = './multi-exit-inception-v3-cifar10-epoch53.pkl'
+SAVE_PATH = os.path.join(os.path.split(__file__)[0], 'multi-exit-inception-v3-cifar10-epoch53.pkl')
 net.load_state_dict(torch.load(SAVE_PATH, map_location='cpu'))
 print('Model is loaded.')
 
@@ -44,8 +44,10 @@ if __name__ == "__main__":
 
         # 终端出口小于16且置信度低于阈值则发往边缘
         if inter_data is not False and prob.tolist()[0] < thres[device_exit-1]:
-            print('Send to RabbitMQ')
+            print('prob=%f<%f, Send to RabbitMQ' % (prob.tolist()[0], thres[device_exit-1]))
             client.call(inter_data, device_exit + 1)
+        else:
+            print('prob=%f>%f, category=%s' % (prob.tolist()[0], thres[device_exit-1], category))
         if i > 10:
             break
     client.wait()
