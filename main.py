@@ -5,7 +5,7 @@ from MP_inception_cifar10 import Inception_v3_cifar10
 from unit.ComputationCore import ComputationCore
 from unit.ComputationUnit import ComputationUnit
 
-conn_params = pika.ConnectionParameters(host='localhost')
+conn_params = pika.ConnectionParameters(host='192.168.1.2')
 
 print('Loading model........')
 net = Inception_v3_cifar10()

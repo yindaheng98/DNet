@@ -1,16 +1,17 @@
 import pika
 import pickle
-import json
 import uuid
-import base64
+import unit.ComputationMessage_pb2 as pb
 
 """
 本文件是用于测试中间层和计算层之间连接客户端类，不是项目的正式内容
 其用途是按照ComputationUnit的格式向中间层RabbitMQ中发送数据，以测试其有效性
 """
 
-class ComputationUnitClient(object):
+
+class ComputationUnitTestClient(object):
     """用于测试中间层和计算层之间连接客户端类"""
+
     def __init__(self, conn_params, queue_name='ComputationQueue'):
         """
         初始化RabbitMQ RPC连接
@@ -32,6 +33,14 @@ class ComputationUnitClient(object):
 
     def __call_back(self, ch, method, props, body):
         print("[x] 收到计算结果%s" % props.correlation_id)
+        response = pb.ComputationResponse()
+        response.ParseFromString(body)
+        if response.status == pb.ComputationResponse.StatusCode.SUCCESS:
+            print(pickle.loads(response.result))
+        elif response.status == pb.ComputationResponse.StatusCode.ERROR:
+            print(response.error_message)
+        else:
+            print("not successful")
         if props.correlation_id in self.corr_ids:
             self.corr_ids[props.correlation_id] = body
 
@@ -42,9 +51,9 @@ class ComputationUnitClient(object):
         @params x
         @params start_layer
         """
-        data = {"x": str(base64.b64encode(pickle.dumps(x)), "utf8"),
-                "start_layer": start_layer}
-        req = json.dumps(data)
+        request = pb.ComputationRequest()
+        request.start_layer = start_layer
+        request.x = pickle.dumps(x)
         corr_id = str(uuid.uuid4())
         self.corr_ids[corr_id] = ""
         self.channel.basic_publish(
@@ -54,7 +63,7 @@ class ComputationUnitClient(object):
                 reply_to=self.callback_queue,
                 correlation_id=corr_id,
             ),
-            body=str(req))
+            body=request.SerializeToString())
         print("[x] 发送计算请求%s" % corr_id)
 
     def wait(self):

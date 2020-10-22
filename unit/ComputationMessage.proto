@@ -1,0 +1,23 @@
+syntax = "proto3";
+package unit;
+message ComputationRequest { //计算请求
+    uint64 start_layer = 1; //计算起始层
+    bytes x = 2; //输入矩阵，按python内格式编码
+}
+
+message ComputationResponse { //计算响应
+    enum StatusCode { //响应状态码
+        ERROR = 0; //出错
+        SUCCESS = 1; //已达到退出条件
+        NOT_SUCCESS = 2; //未达到退出条件
+    }
+    StatusCode status = 1; //响应状态码
+    oneof data {
+        //ERROR时的错误信息
+        string error_message = 2;
+        //SUCCESS时的输出结果
+        bytes result = 3;
+        //NOT_SUCCESS时的下一个计算的计算请求
+        ComputationRequest next_request = 4;
+    }
+}

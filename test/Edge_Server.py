@@ -2,7 +2,7 @@ import torch
 import os
 
 # Multi-exit Inception v3
-from MP_inception_cifar10 import Inception_v3_cifar10
+from MP_inception_cifar10_Server import Inception_v3_cifar10
 
 
 def sendtocloud(info_to_cloud):
