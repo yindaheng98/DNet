@@ -1,6 +1,6 @@
 set PROTO_PATH=.\grpc
 set PROTO_PYTHON_OUT=.\ComputationUnit\unit
-set PROTO_JS_OUT=.\TransmissionUnit
+set PROTO_JS_OUT=.\TransmissionUnit\unit
 set PROTOC=protoc --proto_path=%PROTO_PATH%
 %PROTOC% --python_out=%PROTO_PYTHON_OUT% %PROTO_PATH%\ComputationMessage.proto
 %PROTOC% --js_out=import_style=commonjs,binary:%PROTO_JS_OUT% %PROTO_PATH%\ComputationMessage.proto
