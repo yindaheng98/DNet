@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+# @Author  : Yin Daheng
+
+"""
+本文件是分支网络组成单元中的计算层核心的主函数
+"""
 import torch
 import pika
 import os
@@ -5,6 +11,7 @@ from MP_inception_cifar10 import Inception_v3_cifar10
 from unit.ComputationCore import ComputationCore
 from unit.ComputationUnit import ComputationUnit
 
+# TODO:在启动时从命令行或者系统变量中获取MQ系统的IP地址端口号，默认localhost
 conn_params = pika.ConnectionParameters(host='192.168.1.2')
 
 print('Loading model........')

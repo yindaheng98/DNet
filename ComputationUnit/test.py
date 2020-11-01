@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+# @Author  : Yin Daheng
+
+"""
+本文件用于测试分支网络组成单元中的计算层核心
+"""
 import torch
 import time
 import os
