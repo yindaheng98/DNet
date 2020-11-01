@@ -9,8 +9,8 @@
 """
 import pika
 import pickle
-from unit.ComputationCore import ComputationCore
-import unit.ComputationMessage_pb2 as pb
+from . ComputationCore import ComputationCore
+from . import ComputationMessage_pb2 as pb
 
 
 class ComputationUnit(object):

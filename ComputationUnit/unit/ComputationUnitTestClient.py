@@ -1,7 +1,7 @@
 import pika
 import pickle
 import uuid
-import unit.ComputationMessage_pb2 as pb
+from . import ComputationMessage_pb2 as pb
 
 """
 本文件是用于测试中间层和计算层之间连接客户端类，不是项目的正式内容

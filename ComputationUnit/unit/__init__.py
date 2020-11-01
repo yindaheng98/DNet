@@ -1,4 +1,4 @@
-from unit.ComputationCore import ComputationCore
-from unit.ComputationUnit import ComputationUnit
-from unit.ComputationUnitTestClient import ComputationUnitTestClient
-import unit.ComputationMessage_pb2 as pb
+from . ComputationCore import ComputationCore
+from . ComputationUnit import ComputationUnit
+from . ComputationUnitTestClient import ComputationUnitTestClient
+from . import ComputationMessage_pb2 as pb
