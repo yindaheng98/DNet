@@ -1,0 +1,6 @@
+syntax = "proto3";
+package unit;
+import "ComputationMessage.proto";
+service DNet {
+    rpc Compute (unit.ComputationRequest) returns (unit.ComputationResponse);
+}
