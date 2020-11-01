@@ -1,10 +1,3 @@
-import ComputationMessage_pb2
-import TransmissionUnit_pb2_grpc
-import grpc
-
-channel = grpc.insecure_channel('localhost:8081')
-stub = TransmissionUnit_pb2_grpc.DNetStub(channel)
-
 # -*- coding: utf-8 -*-
 # @Author  : Yin Daheng
 
@@ -14,14 +7,17 @@ stub = TransmissionUnit_pb2_grpc.DNetStub(channel)
 import torch
 import time
 import os
-import pika
+import sys
+sys.path.append(os.path.split(__file__)[0])
 
 # Multi-exit Inception v3
-from test.MP_inception_cifar10_Device import Inception_v3_cifar10, cifar10
-from unit.ComputationUnitTestClient import ComputationUnitTestClient
+from MP_inception_cifar10_Device import Inception_v3_cifar10, cifar10
 
-conn_params = pika.ConnectionParameters(host='192.168.1.2')
-client = ComputationUnitTestClient(conn_params)
+sys.path.append(os.path.split(os.path.split(os.path.abspath(__file__))[0])[0])
+from TransmissionUnit.unit.TransmissionUnitTestClient import TransmissionUnitTestClient
+sys.path.append(os.path.split(__file__)[0])
+
+client = TransmissionUnitTestClient("localhost:8081")
 
 device_exit = 4  # which exit for finishing the first block
 testloader, testset = cifar10(batch=1, train=False)  # 加载CIFAR10测试集
@@ -43,8 +39,6 @@ thres = [0.85, 0.90, 0.90, 0.90,
 
 if __name__ == "__main__":
 
-    response = stub.Compute(ComputationMessage_pb2.HelloRequest(name='czl'))
-    print("Greeter client received: " + response.message)
     # 测试集推断
     for i, (test_in, test_labels) in enumerate(testloader):
         net.eval()

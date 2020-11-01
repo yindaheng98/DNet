@@ -10,6 +10,6 @@ set PROTOC_JS_PLUGIN=protoc-gen-grpc=.\TransmissionUnit\node_modules\.bin\grpc_t
 %PROTOC% --plugin=%PROTOC_JS_PLUGIN% --grpc_out=%PROTO_JS_OUT% %PROTO_PATH%\TransmissionUnit.proto
 
 ::编译用于测试传输层的proto
-set PROTO_JS_TEST_OUT=.\test
+set PROTO_JS_TEST_OUT=.\TransmissionUnit\unit
 %PROTOC% --python_out=%PROTO_JS_TEST_OUT% %PROTO_PATH%\ComputationMessage.proto
 python -m grpc_tools.protoc --proto_path=%PROTO_PATH% --grpc_python_out=%PROTO_JS_TEST_OUT% %PROTO_PATH%\TransmissionUnit.proto

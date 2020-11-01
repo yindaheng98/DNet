@@ -10,6 +10,6 @@ PROTOC_JS_PLUGIN=protoc-gen-grpc=grpc_tools_node_protoc_plugin
 $PROTOC --plugin=$PROTOC_JS_PLUGIN --grpc_out=$PROTO_JS_OUT $PROTO_PATH/TransmissionUnit.proto
 
 #编译用于测试传输层的proto
-PROTO_JS_TEST_OUT=./test
+PROTO_JS_TEST_OUT=./TransmissionUnit/unit
 $PROTOC --python_out=$PROTO_JS_TEST_OUT $PROTO_PATH/ComputationMessage.proto
 python -m grpc_tools.protoc --proto_path=$PROTO_PATH --grpc_python_out=$PROTO_JS_TEST_OUT $PROTO_PATH/TransmissionUnit.proto
