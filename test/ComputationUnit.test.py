@@ -8,10 +8,15 @@ import torch
 import time
 import os
 import pika
+import sys
+sys.path.append(os.path.split(__file__)[0])
 
 # Multi-exit Inception v3
-from test.MP_inception_cifar10_Device import Inception_v3_cifar10, cifar10
-from unit.ComputationUnitTestClient import ComputationUnitTestClient
+from MP_inception_cifar10_Device import Inception_v3_cifar10, cifar10
+
+sys.path.append(os.path.split(os.path.split(os.path.abspath(__file__))[0])[0])
+from ComputationUnit.unit.ComputationUnitTestClient import ComputationUnitTestClient
+sys.path.append(os.path.split(__file__)[0])
 
 conn_params = pika.ConnectionParameters(host='192.168.1.2')
 client = ComputationUnitTestClient(conn_params)
