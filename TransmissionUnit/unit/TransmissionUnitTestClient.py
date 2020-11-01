@@ -1,7 +1,7 @@
 import pickle
 import grpc
-from . import ComputationMessage_pb2 as pb
-from . import TransmissionUnit_pb2_grpc as rpc
+import ComputationMessage_pb2 as pb
+import TransmissionUnit_pb2_grpc as rpc
 
 """
 本文件是用于测试与传输层之间连接客户端类，不是项目的正式内容
@@ -31,6 +31,6 @@ class TransmissionUnitTestClient(object):
         request = pb.ComputationRequest()
         request.start_layer = start_layer
         request.x = pickle.dumps(x)
-        print("发送计算请求%s" % (str(request)[0:20]))
+        print("准备发送计算请求%s" % (request.SerializeToString()[0:20]))
         response = self.stub.Compute(request)
-        print("收到计算结果%s" % (str(response)[0:20]))
+        print("已经收到计算结果%s" % (str(response)[0:20]))
