@@ -15,7 +15,6 @@ from MP_inception_cifar10_Device import Inception_v3_cifar10, cifar10
 
 sys.path.append(os.path.split(os.path.split(os.path.abspath(__file__))[0])[0])
 from TransmissionUnit.unit.TransmissionUnitTestClient import TransmissionUnitTestClient
-sys.path.append(os.path.split(__file__)[0])
 
 client = TransmissionUnitTestClient("localhost:8081")
 
