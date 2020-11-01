@@ -1,0 +1,1 @@
+protoc --proto_path=./grpc --python_out=./ComputationUnit/unit ./grpc/ComputationMessage.proto
