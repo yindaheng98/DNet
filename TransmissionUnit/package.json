@@ -5,6 +5,7 @@
     "@grpc/proto-loader": "^0.1.0",
     "amqplib": "^0.6.0",
     "async": "^1.5.2",
+    "commander": "^6.2.0",
     "google-protobuf": "^3.0.0",
     "grpc": "^1.11.0",
     "grpc-tools": "^1.9.1",

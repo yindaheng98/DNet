@@ -36,5 +36,24 @@ Options:
   -a ADDRESS, --address=ADDRESS
                         要连接的RabbitMQ服务器地址和端口
   -q QUEUENAME, --queuename=QUEUENAME
-                        接收信息的RabbitMQ队列名
+                        接收计算请求的RabbitMQ队列名
+  -e EXITLAYER, --exitlayer=EXITLAYER
+                        出口位置
+```
+
+## 运行传输层单元
+
+```shell
+$ cd TransmissionUnit
+$ npm run start -- -h
+
+Usage: index [options]
+
+Options:
+  -V, --version                          output the version number
+  -l, --listen-address <listen-address>  gRPC服务器将要监听的IP地址和端口 (default: "0.0.0.0:8080")
+  -a, --amqp-address <amqp-address>      与计算层通讯的RabbitMQ服务器接口地址 (default: "amqp://localhost")
+  -q, --queue-name <queue-name>          与计算层通讯的RabbitMQ队列名称 (default: "ComputationQueue")
+  -n, --next-address <next-address>      如果此服务器运行在边缘，此处指定下一套模型（云端）的gRPC服务器位置 (default: "")
+  -h, --help                             display help for command
 ```

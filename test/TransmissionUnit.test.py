@@ -16,7 +16,7 @@ from MP_inception_cifar10_Device import Inception_v3_cifar10, cifar10
 sys.path.append(os.path.split(os.path.split(os.path.abspath(__file__))[0])[0])
 from TransmissionUnit.unit.TransmissionUnitTestClient import TransmissionUnitTestClient
 
-client = TransmissionUnitTestClient("localhost:8081")
+client = TransmissionUnitTestClient("localhost:8080")
 
 device_exit = 4  # which exit for finishing the first block
 testloader, testset = cifar10(batch=1, train=False)  # 加载CIFAR10测试集
@@ -26,7 +26,7 @@ net = Inception_v3_cifar10()
 print('Multi-exit Inception is ready.')
 
 # 加载模型
-SAVE_PATH = os.path.join(os.path.split(__file__)[0], 'multi-exit-inception-v3-cifar10-epoch53.pkl')
+SAVE_PATH = os.path.join(os.path.split(__file__)[0], '../ComputationUnit/multi-exit-inception-v3-cifar10-epoch53.pkl')
 net.load_state_dict(torch.load(SAVE_PATH, map_location='cpu'))
 print('Model is loaded.')
 
