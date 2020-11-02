@@ -20,6 +20,8 @@ def main():  # 在启动时从命令行或者系统变量中获取MQ系统的IP�
                       type='string', help='要连接的RabbitMQ服务器地址和端口', default='localhost')
     parser.add_option('-q', '--queuename', dest='queuename',
                       type='string', help='接收计算请求的RabbitMQ队列名', default='ComputationQueue')
+    parser.add_option('-e', '--exitlayer', dest='exitlayer',
+                      type='int', help='出口位置', default=10)
     options, _ = parser.parse_args()
 
     print('Loading model........')
@@ -37,6 +39,8 @@ def main():  # 在启动时从命令行或者系统变量中获取MQ系统的IP�
     print(' [x] RabbitMQ: connecting to %s' % options.address)
     conn_params = pika.ConnectionParameters(host=options.address)
     print(' [x] RabbitMQ: queue name is %s' % options.queuename)
+
+    print('Inception will exit at layer %d ..........' % options.exitlayer)
     cu = ComputationUnit(ComputationCore(net, thres, 10),
                          conn_params, options.queuename)
     cu.start()
