@@ -31,6 +31,6 @@ class TransmissionUnitTestClient(object):
         request = pb.ComputationRequest()
         request.start_layer = start_layer
         request.x = pickle.dumps(x)
-        print("准备发送计算请求%s" % (request.SerializeToString()[0:20]))
+        print("准备发送计算请求%s" % (str(request)[0:40]))
         response = self.stub.Compute(request)
-        print("已经收到计算结果%s" % (str(response)[0:20]))
+        print("已经收到计算结果%s" % (str(response)[0:40]))

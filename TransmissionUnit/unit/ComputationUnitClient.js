@@ -16,7 +16,7 @@ module.exports = async function ComputationUnitClient(amqp_addr, queue_name) {
         });
     });
     var channel = await new Promise((resolve, reject) => {
-        conn.createChannel(function (err, channel) {
+        connection.createChannel(function (err, channel) {
             if (err) return reject(err);
             return resolve(channel);
         });
@@ -32,7 +32,7 @@ module.exports = async function ComputationUnitClient(amqp_addr, queue_name) {
 
     channel.consume(queue_res.queue, function (msg) {
         var correlationId = msg.properties.correlationId;
-        var callback = callback[correlationId];
+        var callback = callbacks[correlationId];
         if (callback !== undefined) {
             console.log(' [.] Got %s', correlationId);
             callback(pb.ComputationResponse.deserializeBinary(msg.content));
@@ -48,7 +48,7 @@ module.exports = async function ComputationUnitClient(amqp_addr, queue_name) {
         var correlationId = UUID.v1();
         callbacks[correlationId] = callback;
         channel.sendToQueue(queue_name,
-            request.serializeBinary(), {
+            Buffer.from(request.serializeBinary()), {
             correlationId: correlationId,
             replyTo: queue_res.queue
         });

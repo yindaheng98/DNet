@@ -58,4 +58,3 @@ if __name__ == "__main__":
             print('prob=%f>%f, category=%s' % (prob.tolist()[0], thres[device_exit-1], category))
         if i > 20:
             break
-    client.wait()
