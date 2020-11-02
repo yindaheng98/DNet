@@ -18,22 +18,20 @@ module.exports = async function Computer(amqp_addr, queue_name, next_addr) {
      */
     return function Compute(call, callback) {
         console.log("[收到请求] " + call.request.toString().substring(0, 10) + "......");
-        var response = await new Promise((resolve, reject) => {
-            cu_client(call.request, resolve)
-        });//向ComputationUnit发送请求获得响应
-        console.log("[计算结果] " + response.toString().substring(0, 10) + "......");
-
-        if (response.getStatus() === pb.ComputationResponse.StatusCode.NOT_SUCCESS) {//如果是“计算未完成”则发到下一个
-            var request = response.getNextRequest();//取出去下一个边缘的请求
-            console.log("[计算结果 status = StatusCode.NOT_SUCCESS, 发到" + next_addr + "] " + request.toString().substring(0, 10) + "......")
-            client.Compute(request, function (err, response) {//发到下一个边缘
-                if (err) console.error(err);
-                console.log("[计算结果来自" + next_addr + "] " + request.toString().substring(0, 10) + "......")
-                callback(null, response);
-            })
-            return;
-        }
-        console.log("[计算结果 status != StatusCode.NOT_SUCCESS, 返回] ")
-        callback(null, response);
+        cu_client(call.request, (response) => {//向ComputationUnit发送请求获得响应
+            console.log("[计算结果] " + response.toString().substring(0, 10) + "......");
+            if (response.getStatus() === pb.ComputationResponse.StatusCode.NOT_SUCCESS) {//如果是“计算未完成”则发到下一个
+                var request = response.getNextRequest();//取出去下一个边缘的请求
+                console.log("[计算结果 status = StatusCode.NOT_SUCCESS, 发到" + next_addr + "] " + request.toString().substring(0, 10) + "......")
+                rpc_client.Compute(request, function (err, response) {//发到下一个边缘
+                    if (err) console.error(err);
+                    console.log("[计算结果来自" + next_addr + "] " + request.toString().substring(0, 10) + "......")
+                    callback(null, response);
+                })
+                return;
+            }
+            console.log("[计算结果 status != StatusCode.NOT_SUCCESS, 返回] ")
+            callback(null, response);
+        })
     }
 }

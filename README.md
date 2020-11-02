@@ -28,5 +28,13 @@
 ## 运行计算层单元
 
 ```shell
-python ComputationUnit <RabbitMQ IP地址>
+$ python ComputationUnit -h
+Usage: ComputationUnit [options]
+
+Options:
+  -h, --help            show this help message and exit
+  -a ADDRESS, --address=ADDRESS
+                        要连接的RabbitMQ服务器地址和端口
+  -q QUEUENAME, --queuename=QUEUENAME
+                        接收信息的RabbitMQ队列名
 ```
