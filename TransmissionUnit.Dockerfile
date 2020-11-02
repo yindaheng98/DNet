@@ -1,6 +1,7 @@
 FROM node:12-alpine
 
-RUN mv TransmissionUnit /app && rm -rf $(pwd) && cd /app && npm install
+COPY TransmissionUnit /app
 WORKDIR /app
+RUN npm install
 
 CMD ["npm", "run", "start"]
