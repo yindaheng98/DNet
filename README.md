@@ -41,6 +41,14 @@ Options:
                         出口位置
 ```
 
+示例
+
+```shell
+python ComputationUnit -a 192.168.1.2 -q q8 -e 8 # 连到192.168.1.2、队列名q8、从第8层退出
+python ComputationUnit -a 192.168.1.2 -q q12 -e 12 # 连到192.168.1.2、队列名q12、从第12层退出
+python ComputationUnit -a 192.168.1.2 -q q16 -e 16 # 连到192.168.1.2、队列名q16、从第16层退出
+```
+
 ## 运行传输层单元
 
 ```shell
@@ -56,4 +64,12 @@ Options:
   -q, --queue-name <queue-name>          与计算层通讯的RabbitMQ队列名称 (default: "ComputationQueue")
   -n, --next-address <next-address>      如果此服务器运行在边缘，此处指定下一套模型（云端）的gRPC服务器位置 (default: "")
   -h, --help                             display help for command
+```
+
+示例
+
+```shell
+npm run start -- -l 0.0.0.0:8082 -a amqp://192.168.1.2 -q q16
+npm run start -- -l 0.0.0.0:8081 -a amqp://192.168.1.2 -q q12 -n localhost:8082
+npm run start -- -l 0.0.0.0:8080 -a amqp://192.168.1.2 -q q8 -n localhost:8081
 ```

@@ -27,7 +27,7 @@ module.exports = async function Computer(amqp_addr, queue_name, next_addr) {
                 //如果需要发到下一个且计算结果是“计算未完成”则发到下一个
                 var request = response.getNextRequest();//取出去下一个边缘的请求
                 console.log("[计算结果 status = StatusCode.NOT_SUCCESS, 发到" + next_addr + "] " + request.toString().substring(0, 10) + "......")
-                rpc_client.Compute(request, function (err, response) {//发到下一个边缘
+                rpc_client.compute(request, function (err, response) {//发到下一个边缘
                     if (err) console.error(err);
                     console.log("[计算结果来自" + next_addr + "] " + request.toString().substring(0, 10) + "......")
                     callback(null, response);
