@@ -12,7 +12,8 @@
     "minimist": "^1.2.0"
   },
   "scripts": {
-    "start": "node ./index.js"
+    "start": "node ./index.js",
+    "test_pb": "node ./unit/ComputationMessage_pb.test.js"
   },
   "author": "Howard Yin",
   "license": "ISC"

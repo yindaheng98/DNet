@@ -1,0 +1,12 @@
+var pb = require("./ComputationMessage_pb");
+var request = new pb.ComputationRequest();
+request.setStartLayer(12);
+console.log(request.toString().substring(0, 10));
+var s = request.serializeBinary();
+console.log(s);
+console.log(typeof s);
+request = pb.ComputationRequest.deserializeBinary(s);
+console.log(request.serializeBinary());
+var response = new pb.ComputationResponse();
+console.log(response.getStatus());
+console.log(pb.ComputationResponse.StatusCode.NOT_SUCCESS);

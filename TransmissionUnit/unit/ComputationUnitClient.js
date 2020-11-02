@@ -1,3 +1,4 @@
+var pb = require("./ComputationMessage_pb")
 var amqp = require('amqplib/callback_api');
 var UUID = require('uuid');
 
@@ -5,7 +6,7 @@ var UUID = require('uuid');
  * 生成一个ComputationUnit客户端
  * @param amqp_addr amqp系统的地址，如"amqp://username:password@localhost:5672"
  * @param queue_name 要发送的队列名
- * @return 一个函数，输入ComputationRequest、异步输出
+ * @return 返回ComputationUnit客户端调用函数，输入ComputationRequest，使用callback进行异步输出ComputationResponse
  */
 module.exports = async function ComputationUnitClient(amqp_addr, queue_name) {
     var connection = await new Promise((resolve, reject) => {
@@ -34,10 +35,15 @@ module.exports = async function ComputationUnitClient(amqp_addr, queue_name) {
         var callback = callback[correlationId];
         if (callback !== undefined) {
             console.log(' [.] Got %s', correlationId);
-            callback(msg.content);
+            callback(pb.ComputationResponse.deserializeBinary(msg.content));
         }
     });
 
+    /**
+     * 生成一个ComputationUnit客户端
+     * @param request 输入ComputationRequest
+     * @param callback 请求返回回调函数，输入为ComputationResponse
+     */
     return function (request, callback) {
         var correlationId = UUID.v1();
         callbacks[correlationId] = callback;
