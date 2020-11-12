@@ -1,0 +1,11 @@
+image: yindaheng98/dnet-computationunit:latest
+manifests:
+  - image: yindaheng98/dnet-computationunit:amd64
+    platform:
+      architecture: amd64
+      os: linux
+  - image: yindaheng98/dnet-computationunit:arm64v8
+    platform:
+      architecture: arm64
+      os: linux
+      variant: v8
