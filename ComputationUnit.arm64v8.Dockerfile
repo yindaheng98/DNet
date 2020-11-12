@@ -1,15 +1,15 @@
 FROM busybox AS downloader
-RUN mkdir /tmp && cd /tmp && \
+RUN mkdir /torch && cd /torch && \
     wget http://mathinf.com/pytorch/arm64/torch-1.7.0a0-cp37-cp37m-linux_aarch64.whl && \
     wget http://mathinf.com/pytorch/arm64/torchvision-0.8.0a0+45f960c-cp37-cp37m-linux_aarch64.whl
 
 FROM multiarch/qemu-user-static:x86_64-aarch64 as qemu
 FROM arm64v8/python:3.7.9-slim-buster
 COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
-COPY --from=downloader /tmp /tmp
-RUN pip3 install /tmp/torch-1.7.0a0-cp37-cp37m-linux_aarch64.whl && \
-    pip3 install /tmp/torchvision-0.8.0a0+45f960c-cp37-cp37m-linux_aarch64.whl && \
-    rm -rf /tmp && \
+COPY --from=downloader /torch /torch
+RUN pip3 install /torch/torch-1.7.0a0-cp37-cp37m-linux_aarch64.whl && \
+    pip3 install /torch/torchvision-0.8.0a0+45f960c-cp37-cp37m-linux_aarch64.whl && \
+    rm -rf /torch && \
     apt-get update && \
     apt-get -y upgrade && \
     apt-get install -y libopenmpi-dev && \
