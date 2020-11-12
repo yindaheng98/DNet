@@ -8,7 +8,7 @@ COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
 COPY --from=downloader /torch.whl /torch-1.7.0a0-cp37-cp37m-linux_aarch64.whl
 #COPY ./torch-1.7.0a0-cp37-cp37m-linux_aarch64.whl /torch-1.7.0a0-cp37-cp37m-linux_aarch64.whl
 RUN pip3 install /torch-1.7.0a0-cp37-cp37m-linux_aarch64.whl && \
-    pip3 install torchvision==0.8.1+cpu && \
+    pip3 install torchvision==0.8.1 && \
     apt-get update && \
     apt-get -y upgrade && \
     apt-get install -y libopenmpi-dev
