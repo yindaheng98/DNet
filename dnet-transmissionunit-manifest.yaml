@@ -1,0 +1,11 @@
+image: yindaheng98/dnet-transmissionunit:latest
+manifests:
+  - image: yindaheng98/dnet-transmissionunit:amd64
+    platform:
+      architecture: amd64
+      os: linux
+  - image: yindaheng98/dnet-transmissionunit:arm64v8
+    platform:
+      architecture: arm64
+      os: linux
+      variant: v8
