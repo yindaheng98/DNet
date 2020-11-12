@@ -1,1 +1,2 @@
+#!/bin/bash
 docker build --squash -f $DOCKERFILE_PATH -t $IMAGE_NAME .
