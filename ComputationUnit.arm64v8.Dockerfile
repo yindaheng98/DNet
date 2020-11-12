@@ -11,9 +11,9 @@ RUN pip3 install /torch/torch-1.7.0a0-cp37-cp37m-linux_aarch64.whl && \
     pip3 install /torch/torchvision-0.8.0a0+45f960c-cp37-cp37m-linux_aarch64.whl && \
     rm -rf /torch && \
     apt-get update && \
-    apt-get -y upgrade && \
     apt-get install -y libopenmpi-dev && \
-    rm /usr/bin/qemu-aarch64-static
+    rm /usr/bin/qemu-aarch64-static && \
+    apt-get clean
 
 COPY ComputationUnit /app/ComputationUnit
 WORKDIR /app
