@@ -78,7 +78,9 @@ python ComputationUnit -a 192.168.1.2 -q q16 -e 16 # 连到192.168.1.2、队列�
 Dockerhub地址是[yindaheng98/dnet-computationunit](https://hub.docker.com/repository/docker/yindaheng98/dnet-computationunit)。内置模型文件无需额外下载，运行指令同上。
 
 ```sh
-docker run --rm yindaheng98/dnet-computationunit python ComputationUnit -h
+docker run --rm yindaheng98/dnet-computationunit python ComputationUnit -a 192.168.56.1 -q q8 -e 8 # 连到192.168.56.1、队列名q8、从第8层退出
+docker run --rm yindaheng98/dnet-computationunit python ComputationUnit -a 192.168.56.1 -q q12 -e 12 # 连到192.168.56.1、队列名q12、从第12层退出
+docker run --rm yindaheng98/dnet-computationunit python ComputationUnit -a 192.168.56.1 -q q16 -e 16 # 连到192.168.56.1、队列名q16、从第16层退出
 ```
 
 ## 运行传输层
@@ -113,7 +115,9 @@ npm run start -- -l 0.0.0.0:8080 -a amqp://192.168.1.2 -q q8 -n localhost:8081
 Dockerhub地址是[yindaheng98/dnet-transmissionunit](https://hub.docker.com/repository/docker/yindaheng98/dnet-transmissionunit)。运行指令同上。
 
 ```sh
-docker run --rm yindaheng98/dnet-transmissionunit npm run start -- -h
+docker run --rm yindaheng98/dnet-transmissionunit npm run start -- -l 0.0.0.0:8082 -a amqp://192.168.56.1 -q q16
+docker run --rm yindaheng98/dnet-transmissionunit npm run start -- -l 0.0.0.0:8081 -a amqp://192.168.56.1 -q q12 -n 192.168.56.1:8082
+docker run --rm yindaheng98/dnet-transmissionunit npm run start -- -l 0.0.0.0:8080 -a amqp://192.168.56.1 -q q8 -n 192.168.56.1:8081
 ```
 
 ## K8S部署示例
