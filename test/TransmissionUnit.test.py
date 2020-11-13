@@ -16,7 +16,16 @@ from MP_inception_cifar10_Device import Inception_v3_cifar10, cifar10
 sys.path.append(os.path.split(os.path.split(os.path.abspath(__file__))[0])[0])
 from TransmissionUnit.unit.TransmissionUnitTestClient import TransmissionUnitTestClient
 
-client = TransmissionUnitTestClient("localhost:8080")
+import optparse
+parser = optparse.OptionParser()
+parser.add_option('-a', '--address', dest='address',
+                    type='string', help='要测试服务器地址和端口', default='localhost:8080')
+parser.add_option('-n', '--number', dest='number',
+                    type='int', help='测试多少张图片', default='100')
+options, _ = parser.parse_args()
+print("对%s进行%d张图片的测试"%(options.address, options.number))
+
+client = TransmissionUnitTestClient(options.address)
 
 device_exit = 4  # which exit for finishing the first block
 testloader, testset = cifar10(batch=1, train=False)  # 加载CIFAR10测试集
@@ -56,5 +65,5 @@ if __name__ == "__main__":
             client.call(inter_data, device_exit)
         else:
             print('prob=%f>%f, category=%s' % (prob.tolist()[0], thres[device_exit-1], category))
-        if i > 50:
+        if i > options.number:
             break
