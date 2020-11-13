@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dnet-unit-12
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dnet-unit-12
+  template:
+    metadata:
+      name: dnet-unit-12-pod
+      labels:
+        app: dnet-unit-12
+    spec:
+      containers:
+        - name: dnet-computationunit
+          image: yindaheng98/dnet-computationunit
+          command: ["python"]
+          args: ["ComputationUnit", "-e", "12"]
+        - name: dnet-transmissionunit
+          image: yindaheng98/dnet-transmissionunit
+          command: ["npm"]
+          args: ["run", "start", "--", "-n", "dnet-unit-16:8080"]
+          ports:
+            - containerPort: 8080
+        - name: dnet-middleware
+          image: rabbitmq:alpine
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dnet-unit-12
+spec:
+  selector:
+    app: dnet-unit-12
+  ports:
+  - name: dnet-transmissionunit
+    protocol: TCP
+    port: 8080
+    targetPort: 8080

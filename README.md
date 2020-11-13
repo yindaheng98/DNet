@@ -44,7 +44,9 @@
 
 ## 运行计算层
 
-```shell
+### 直接运行
+
+```sh
 $ python ComputationUnit -h
 Usage: ComputationUnit [options]
 
@@ -60,15 +62,30 @@ Options:
 
 示例
 
-```shell
+```sh
+$ git clone https://github.com/yindaheng98/torch-models
+$ mv ./torch-models/multi-exit-inception-v3-cifar10-epoch53.pkl ./ComputationUnit/multi-exit-inception-v3-cifar10-epoch53.pkl
+$ rm -rf ./torch-models
+# 模型文件太大于是给放到别的repo里面了，要先下载才能运行
+
 python ComputationUnit -a 192.168.1.2 -q q8 -e 8 # 连到192.168.1.2、队列名q8、从第8层退出
 python ComputationUnit -a 192.168.1.2 -q q12 -e 12 # 连到192.168.1.2、队列名q12、从第12层退出
 python ComputationUnit -a 192.168.1.2 -q q16 -e 16 # 连到192.168.1.2、队列名q16、从第16层退出
 ```
 
+### Docker运行
+
+Dockerhub地址是[yindaheng98/dnet-computationunit](https://hub.docker.com/repository/docker/yindaheng98/dnet-computationunit)。内置模型文件无需额外下载，运行指令同上。
+
+```sh
+docker run --rm yindaheng98/dnet-computationunit python ComputationUnit -h
+```
+
 ## 运行传输层
 
-```shell
+### 直接运行
+
+```sh
 $ cd TransmissionUnit
 $ npm run start -- -h
 
@@ -85,8 +102,43 @@ Options:
 
 示例
 
-```shell
+```sh
 npm run start -- -l 0.0.0.0:8082 -a amqp://192.168.1.2 -q q16
 npm run start -- -l 0.0.0.0:8081 -a amqp://192.168.1.2 -q q12 -n localhost:8082
 npm run start -- -l 0.0.0.0:8080 -a amqp://192.168.1.2 -q q8 -n localhost:8081
+```
+
+### Docker运行
+
+Dockerhub地址是[yindaheng98/dnet-transmissionunit](https://hub.docker.com/repository/docker/yindaheng98/dnet-transmissionunit)。运行指令同上。
+
+```sh
+docker run --rm yindaheng98/dnet-transmissionunit npm run start -- -h
+```
+
+## K8S部署示例
+
+k8s部署示例yaml文件位于`example`文件夹。一共划分为4种计算单元，退出层分别是4、8、12、16层，每个计算单元有3个备份。
+
+部署：
+
+```sh
+URL=https://raw.githubusercontent.com/yindaheng98/yindaheng98.top/main/example
+kubectl apply -f $URL/dnet-unit-4.yaml
+kubectl apply -f $URL/dnet-unit-8.yaml
+kubectl apply -f $URL/dnet-unit-12.yaml
+kubectl apply -f $URL/dnet-unit-16.yaml
+```
+
+删除：
+
+```sh
+kubectl delete deploy dnet-unit-4
+kubectl delete deploy dnet-unit-8
+kubectl delete deploy dnet-unit-12
+kubectl delete deploy dnet-unit-16
+kubectl delete svc dnet-unit-4
+kubectl delete svc dnet-unit-8
+kubectl delete svc dnet-unit-12
+kubectl delete svc dnet-unit-16
 ```
