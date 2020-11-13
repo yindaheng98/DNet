@@ -71,6 +71,7 @@ rm -rf ./torch-models
 python -m venv ./ComputationUnit/venv
 ./ComputationUnit/venv/Scripts/activate.ps1
 pip install -r ./ComputationUnit/requirements.txt
+pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio===0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
 #装好环境
 
 python ComputationUnit -a 192.168.1.2 -q q8 -e 8 # 连到192.168.1.2、队列名q8、从第8层退出
@@ -156,6 +157,14 @@ python load_data.py
 # 加载数据集
 
 python TransmissionUnit.test.py -a 192.168.56.1:8080
+```
+
+### Docker运行
+
+Dockerhub地址是[yindaheng98/dnet-testunit](https://hub.docker.com/repository/docker/yindaheng98/dnet-testunit)。运行指令同上。
+
+```sh
+docker run --rm -it yindaheng98/dnet-testunit python TransmissionUnit.test.py -a 192.168.56.1:8080
 ```
 
 ## K8S部署示例
