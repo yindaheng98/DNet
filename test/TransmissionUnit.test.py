@@ -22,12 +22,14 @@ parser.add_option('-a', '--address', dest='address',
                     type='string', help='要测试服务器地址和端口', default='localhost:8080')
 parser.add_option('-n', '--number', dest='number',
                     type='int', help='测试多少张图片', default='100')
+parser.add_option('-e', '--exit', dest='exit',
+                    type='int', help='在第几层退出', default='4')
 options, _ = parser.parse_args()
-print("对%s进行%d张图片的测试"%(options.address, options.number))
+print("对%s进行%d张图片的测试，在第%d层退出"%(options.address, options.number, options.exit))
 
 client = TransmissionUnitTestClient(options.address)
 
-device_exit = 4  # which exit for finishing the first block
+device_exit = options.exit  # which exit for finishing the first block
 testloader, testset = cifar10(batch=1, train=False)  # 加载CIFAR10测试集
 
 # 创建模型
