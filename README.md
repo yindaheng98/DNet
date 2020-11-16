@@ -169,7 +169,15 @@ docker run --rm -it yindaheng98/dnet-testunit python TransmissionUnit.test.py -a
 
 ## K8S部署示例
 
-k8s部署示例yaml文件位于`example`文件夹。一共划分为4种计算单元，退出层分别是4、8、12、16层，每个计算单元有3个备份。
+k8s部署示例yaml文件位于`example`文件夹。
+
+### 示例一：每个Pod中都包含计算层、传输层和队列系统各一个
+
+示例yaml文件位于`example/one-hot`文件夹。
+
+这种部署方式下，每个Pod中都有计算层、传输层和队列系统，虽然简单易维护但是比较占资源。
+
+一共划分为4种计算单元，退出层分别是4、8、12、16层，每个计算单元有3个备份。
 
 部署：
 
@@ -189,4 +197,41 @@ kubectl delete deploy dnet-unit-16
 kubectl delete svc dnet-unit-8
 kubectl delete svc dnet-unit-12
 kubectl delete svc dnet-unit-16
+```
+
+### 示例二：计算层、传输层和队列系统部署在不同的Pod中
+
+示例yaml文件位于`example/distrib`文件夹。
+
+这种部署方式比较自由，各部分可以根据负载情况动态地调整部署规模，适合于边缘环境下各设备算力不同的情况，代价是需要运维人员关心各层间的关系，维护起来比较复杂。
+
+一共划分为4种计算单元，退出层分别是4、8、12、16层。每个计算层单元有3个备份，每个传输层单元有一个备份，它们共用一个队列系统，不同层的计算任务在名称不同的队列中传输。
+
+注：按照开头介绍的那套系统架构，由于每个计算层单元的3个备份都从同一个队列中执行计算任务，因此传输层单元不可以有多个备份
+
+```sh
+URL=https://raw.githubusercontent.com/yindaheng98/yindaheng98.top/main/example/distrib
+kubectl apply -f $URL/dnet-queue.yaml
+kubectl apply -f $URL/dnet-transmissionunit-8.yaml
+kubectl apply -f $URL/dnet-transmissionunit-12.yaml
+kubectl apply -f $URL/dnet-transmissionunit-16.yaml
+kubectl apply -f $URL/dnet-computationunit-16.yaml
+kubectl apply -f $URL/dnet-computationunit-12.yaml
+kubectl apply -f $URL/dnet-computationunit-8.yaml
+```
+
+删除：
+
+```sh
+kubectl delete deploy dnet-computationunit-8
+kubectl delete deploy dnet-computationunit-12
+kubectl delete deploy dnet-computationunit-16
+kubectl delete svc dnet-unit-8
+kubectl delete deploy dnet-transmissionunit-8
+kubectl delete svc dnet-unit-12
+kubectl delete deploy dnet-transmissionunit-12
+kubectl delete svc dnet-unit-16
+kubectl delete deploy dnet-transmissionunit-16
+kubectl delete svc dnet-queue
+kubectl delete deploy dnet-queue
 ```

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dnet-transmissionunit-16
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dnet-transmissionunit-16
+  template:
+    metadata:
+      name: dnet-transmissionunit-16-pod
+      labels:
+        app: dnet-transmissionunit-16
+    spec:
+      containers:
+        - name: dnet-transmissionunit
+          image: yindaheng98/dnet-transmissionunit
+          ports:
+            - containerPort: 8080
+          command: ["npm"]
+          args:
+            - "run"
+            - "start"
+            - "--"
+            - "-a"
+            - "amqp://dnet-queue"
+            - "-q"
+            - "q16"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dnet-unit-16
+spec:
+  selector:
+    app: dnet-transmissionunit-16
+  ports:
+  - name: dnet-transmissionunit
+    protocol: TCP
+    port: 8080
+    targetPort: 8080

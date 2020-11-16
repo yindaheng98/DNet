@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dnet-computationunit-16
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dnet-computationunit-16
+  template:
+    metadata:
+      name: dnet-computationunit-16-pod
+      labels:
+        app: dnet-computationunit-16
+    spec:
+      containers:
+        - name: dnet-computationunit
+          image: yindaheng98/dnet-computationunit
+          command: ["python"]
+          args:
+            - "ComputationUnit"
+            - "-a"
+            - "dnet-queue"
+            - "-e"
+            - "16"
+            - "-q"
+            - "q16"

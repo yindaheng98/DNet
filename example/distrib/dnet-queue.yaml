@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dnet-queue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dnet-queue
+  template:
+    metadata:
+      name: dnet-queue-pod
+      labels:
+        app: dnet-queue
+    spec:
+      containers:
+        - name: dnet-queue
+          image: rabbitmq:alpine
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dnet-queue
+spec:
+  selector:
+    app: dnet-queue
+  ports:
+  - name: dnet-queue-0
+    protocol: TCP
+    port: 5672
+    targetPort: 5672
+  - name: dnet-queue-1
+    protocol: TCP
+    port: 15672
+    targetPort: 15672
