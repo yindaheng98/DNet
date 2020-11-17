@@ -197,7 +197,7 @@ kubectl delete po dnet-testunit
 部署：
 
 ```sh
-URL=https://raw.githubusercontent.com/yindaheng98/yindaheng98.top/main/example
+URL=https://raw.githubusercontent.com/yindaheng98/DNet/main/example/one-hot
 kubectl apply -f $URL/dnet-unit-8.yaml
 kubectl apply -f $URL/dnet-unit-12.yaml
 kubectl apply -f $URL/dnet-unit-16.yaml

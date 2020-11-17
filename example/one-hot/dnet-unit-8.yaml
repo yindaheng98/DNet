@@ -26,8 +26,6 @@ spec:
             - containerPort: 8080
         - name: dnet-middleware
           image: rabbitmq:alpine
-        - name: dnet-test
-          image: yindaheng98/dnet-testunit
 ---
 apiVersion: v1
 kind: Service
