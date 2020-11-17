@@ -74,6 +74,7 @@ pip install -r ./ComputationUnit/requirements.txt
 pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio===0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
 #装好环境
 
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:alpine
 python ComputationUnit -a 192.168.1.2 -q q8 -e 8 # 连到192.168.1.2、队列名q8、从第8层退出
 python ComputationUnit -a 192.168.1.2 -q q12 -e 12 # 连到192.168.1.2、队列名q12、从第12层退出
 python ComputationUnit -a 192.168.1.2 -q q16 -e 16 # 连到192.168.1.2、队列名q16、从第16层退出
@@ -84,6 +85,7 @@ python ComputationUnit -a 192.168.1.2 -q q16 -e 16 # 连到192.168.1.2、队列�
 Dockerhub地址是[yindaheng98/dnet-computationunit](https://hub.docker.com/repository/docker/yindaheng98/dnet-computationunit)。内置模型文件无需额外下载，运行指令同上。
 
 ```sh
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:alpine
 docker run --rm -it yindaheng98/dnet-computationunit python ComputationUnit -a 192.168.56.1 -q q8 -e 8 # 连到192.168.56.1、队列名q8、从第8层退出
 docker run --rm -it yindaheng98/dnet-computationunit python ComputationUnit -a 192.168.56.1 -q q12 -e 12 # 连到192.168.56.1、队列名q12、从第12层退出
 docker run --rm -it yindaheng98/dnet-computationunit python ComputationUnit -a 192.168.56.1 -q q16 -e 16 # 连到192.168.56.1、队列名q16、从第16层退出
@@ -171,6 +173,19 @@ docker run --rm -it yindaheng98/dnet-testunit python TransmissionUnit.test.py -a
 
 k8s部署示例yaml文件位于`example`文件夹。
 
+两种方案中执行测试均可用如下语句：
+
+```sh
+python TransmissionUnit.test.py -a localhost:8080
+```
+
+或者
+
+```sh
+kubectl run -i --tty dnet-testunit --image=yindaheng98/dnet-testunit --restart=Never --command -- python TransmissionUnit.test.py -a dnet-unit-8:8080
+kubectl delete po dnet-testunit
+```
+
 ### 示例一：每个Pod中都包含计算层、传输层和队列系统各一个
 
 示例yaml文件位于`example/one-hot`文件夹。
@@ -191,12 +206,13 @@ kubectl apply -f $URL/dnet-unit-16.yaml
 删除：
 
 ```sh
-kubectl delete deploy dnet-unit-8
-kubectl delete deploy dnet-unit-12
-kubectl delete deploy dnet-unit-16
+kubectl delete svc dnet-entrance
 kubectl delete svc dnet-unit-8
+kubectl delete deploy dnet-unit-8
 kubectl delete svc dnet-unit-12
+kubectl delete deploy dnet-unit-12
 kubectl delete svc dnet-unit-16
+kubectl delete deploy dnet-unit-16
 ```
 
 ### 示例二：计算层、传输层和队列系统部署在不同的Pod中
@@ -223,6 +239,7 @@ kubectl apply -f $URL/dnet-computationunit-8.yaml
 删除：
 
 ```sh
+kubectl delete svc dnet-entrance
 kubectl delete deploy dnet-computationunit-8
 kubectl delete deploy dnet-computationunit-12
 kubectl delete deploy dnet-computationunit-16
