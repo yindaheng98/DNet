@@ -186,6 +186,13 @@ kubectl run -i --tty dnet-testunit --image=yindaheng98/dnet-testunit --restart=N
 kubectl delete po dnet-testunit
 ```
 
+### 开始之前先装个ingress-nginx
+
+```shell
+kubectl apply -f https://github.com/kubernetes/ingress-nginx/raw/ingress-nginx-2.11.2/deploy/static/provider/cloud/deploy.yaml
+kubectl apply -f https://raw.githubusercontent.com/yindaheng98/DNet/main/example/ingress-nginx.yaml
+```
+
 ### 示例一：每个Pod中都包含计算层、传输层和队列系统各一个
 
 示例yaml文件位于`example/one-hot`文件夹。
@@ -197,16 +204,17 @@ kubectl delete po dnet-testunit
 部署：
 
 ```sh
-URL=https://raw.githubusercontent.com/yindaheng98/yindaheng98.top/main/example
-kubectl apply -f $URL/dnet-unit-8.yaml
-kubectl apply -f $URL/dnet-unit-12.yaml
-kubectl apply -f $URL/dnet-unit-16.yaml
+URL=https://raw.githubusercontent.com/yindaheng98/DNet/main/example
+kubectl apply -f $URL/one-hot/dnet-unit-8.yaml
+kubectl apply -f $URL/one-hot/dnet-unit-12.yaml
+kubectl apply -f $URL/one-hot/dnet-unit-16.yaml
+kubectl apply -f $URL/dnet-ingress.yaml
 ```
 
 删除：
 
 ```sh
-kubectl delete svc dnet-entrance
+kubectl delete ingress dnet-ingress
 kubectl delete svc dnet-unit-8
 kubectl delete deploy dnet-unit-8
 kubectl delete svc dnet-unit-12
@@ -226,20 +234,21 @@ kubectl delete deploy dnet-unit-16
 注：按照开头介绍的那套系统架构，由于每个计算层单元的3个备份都从同一个队列中执行计算任务，因此传输层单元不可以有多个备份
 
 ```sh
-URL=https://raw.githubusercontent.com/yindaheng98/yindaheng98.top/main/example/distrib
-kubectl apply -f $URL/dnet-queue.yaml
-kubectl apply -f $URL/dnet-transmissionunit-8.yaml
-kubectl apply -f $URL/dnet-transmissionunit-12.yaml
-kubectl apply -f $URL/dnet-transmissionunit-16.yaml
-kubectl apply -f $URL/dnet-computationunit-16.yaml
-kubectl apply -f $URL/dnet-computationunit-12.yaml
-kubectl apply -f $URL/dnet-computationunit-8.yaml
+URL=https://raw.githubusercontent.com/yindaheng98/DNet/main/example
+kubectl apply -f $URL/distrib/dnet-queue.yaml
+kubectl apply -f $URL/distrib/dnet-transmissionunit-8.yaml
+kubectl apply -f $URL/distrib/dnet-transmissionunit-12.yaml
+kubectl apply -f $URL/distrib/dnet-transmissionunit-16.yaml
+kubectl apply -f $URL/distrib/dnet-computationunit-16.yaml
+kubectl apply -f $URL/distrib/dnet-computationunit-12.yaml
+kubectl apply -f $URL/distrib/dnet-computationunit-8.yaml
+kubectl apply -f $URL/dnet-ingress.yaml
 ```
 
 删除：
 
 ```sh
-kubectl delete svc dnet-entrance
+kubectl delete ingress dnet-ingress
 kubectl delete deploy dnet-computationunit-8
 kubectl delete deploy dnet-computationunit-12
 kubectl delete deploy dnet-computationunit-16
@@ -252,3 +261,48 @@ kubectl delete deploy dnet-transmissionunit-16
 kubectl delete svc dnet-queue
 kubectl delete deploy dnet-queue
 ```
+
+## 问题解决集锦
+
+### 2020-11-18 学院停电
+
+学院停电导致ubuntu树莓派未正常关机，开机后无法写文件
+
+```sh
+fsck.ext4 -y /dev/mmcblk0p2
+shutdown -r now
+```
+
+### 2020-11-18 Dockerhub网速太慢
+
+Dockerhub太慢导致镜像下不下来
+
+找一台性能好点的主机开个缓存镜像
+
+```sh
+docker run -d -p 80:5000 --restart=always --name=pull-through-cache \
+  -e REGISTRY_PROXY_REMOTEURL="https://4h50gpde.mirror.aliyuncs.com" \
+  -e REGISTRY_PROXY_USERNAME=yindaheng98 \
+  -e REGISTRY_PROXY_PASSWORD=YHM19980228yhm \
+  registry
+```
+
+然后在网速比较慢的机器上面写入镜像地址，注意不要覆盖了`/etc/docker/daemon.json`里面原本的设置。
+
+比如在服务器上：
+
+```sh
+echo '{"registry-mirrors": ["http://192.168.3.4"],"exec-opts": ["native.cgroupdriver=systemd"]}' > /etc/docker/daemon.json
+systemctl daemon-reload
+systemctl restart docker
+```
+
+树莓派上：
+
+```sh
+echo '{"registry-mirrors": ["http://192.168.3.4"]}' > /etc/docker/daemon.json
+systemctl daemon-reload
+systemctl restart docker
+```
+
+要尽最大可能减少边缘从云端下载镜像的情况。
