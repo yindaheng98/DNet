@@ -190,7 +190,6 @@ kubectl delete po dnet-testunit
 
 ```shell
 kubectl apply -f https://github.com/kubernetes/ingress-nginx/raw/ingress-nginx-2.11.2/deploy/static/provider/cloud/deploy.yaml
-kubectl apply -f https://raw.githubusercontent.com/yindaheng98/DNet/main/example/ingress-nginx.yaml
 ```
 
 ### 示例一：每个Pod中都包含计算层、传输层和队列系统各一个
@@ -305,4 +304,100 @@ systemctl daemon-reload
 systemctl restart docker
 ```
 
-要尽最大可能减少边缘从云端下载镜像的情况。
+尽最大可能减少边缘从云端下载镜像的情况。
+
+### 2020-11-20 手工批量执行速度太慢
+
+用`expect`做一个函数用于自动交互：
+
+```sh
+function RunCmd(){
+ips=("192.168.3.51" "192.168.3.52" "192.168.3.53" "192.168.3.54")
+username="ubuntu"
+password="raspberry"
+
+for ((k = 0; k < ${#ips[@]}; k++)); do
+command=$($1 `expr $k + 1`)
+ip=${ips[$k]}
+expect << EOF
+    set timeout -1
+    spawn ssh $username@$ip
+    expect {
+        "*yes/no" { send "yes\r"; exp_continue }
+        "*password:" { send "$password\r" }
+    }
+    expect "ubuntu@ubuntu"
+    send "su\r"
+    expect "*Password:"
+    send "$password\r"
+    expect "*#"
+    send "$command\r"
+    expect "*#"
+    send "exit\r"
+    expect "ubuntu@ubuntu"
+    send "exit\r"
+    expect eof
+EOF
+done
+}
+```
+
+#### 2020-11-20 重置树莓派集群
+
+```sh
+function ResetCmd(){
+echo "keadm reset"
+}
+RunCmd ResetCmd
+```
+
+#### 2020-11-20 初始化树莓派集群
+
+```sh
+function InitCmd(){
+token="d0284b693d8184b90f16e69aa8358e03ff3f1c776af15954f94c753a2c49c8b2.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDU4NjAxODR9.NxYaV2VMAQBcu0sHfiaD3-piit5cdEwXHj9Z5rkXKto"
+proxy="http://10.201.154.168:10800/"
+echo "echo -e 'http_proxy=$proxy\nhttps_proxy=$proxy\nuse_proxy = on' > ~/.wgetrc && keadm join --kubeedge-version=1.4.0 --cloudcore-ipport=192.168.3.11:10000 --edgenode-name=edge0$1 --token=$token && rm ~/.wgetrc"
+}
+RunCmd InitCmd
+```
+
+#### 2020-11-20 下载Ingress镜像
+
+```sh
+function IngressCmd(){
+proxy="http://10.201.154.168:10800/"
+command="mkdir -p /etc/systemd/system/docker.service.d && echo -e '\[Service\]\nEnvironment=\\\"HTTP_PROXY=$proxy\\\" \\\"HTTPS_PROXY=$proxy\\\" \\\"NO_PROXY=\\\"' >> /etc/systemd/system/docker.service.d/http-proxy.conf && systemctl daemon-reload && systemctl restart docker"
+command="$command && docker pull us.gcr.io/k8s-artifacts-prod/ingress-nginx/controller:v0.34.1@sha256:0e072dddd1f7f8fc8909a2ca6f65e76c5f0d2fcfb8be47935ae3457e8bbceb20 && docker pull docker.io/jettech/kube-webhook-certgen:v1.2.2"
+command="$command && rm -rf /etc/systemd/system/docker.service.d && systemctl daemon-reload && systemctl restart docker"
+echo "$command"
+}
+RunCmd IngressCmd
+```
+
+#### 2020-11-20 设置Dockerhub镜像源
+
+```sh
+function GenCmd(){
+echo "echo '{\\\"registry-mirrors\\\": [\\\"http://192.168.3.4\\\"]}' > /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker"
+}
+RunCmd GenCmd
+```
+
+#### 2020-11-20 下载DNet所需的镜像
+
+```sh
+function DownCmd(){
+echo "docker pull yindaheng98/dnet-transmissionunit && docker pull yindaheng98/dnet-computationunit && docker pull rabbitmq:alpine"
+}
+RunCmd GenCmd
+```
+
+#### 2020-11-20 重置Dockerhub镜像源
+
+```sh
+function DelCmd(){
+echo "rm /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker"
+}
+RunCmd DelCmd
+```
