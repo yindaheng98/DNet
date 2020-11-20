@@ -308,10 +308,10 @@ systemctl restart docker
 
 ### 2020-11-20 手工批量执行速度太慢
 
-用`expect`做一个函数用于自动交互：
+用`expect`做一个函数用于与树莓派自动交互：
 
 ```sh
-function RunCmd(){
+function PiRunCmd(){
 ips=("192.168.3.51" "192.168.3.52" "192.168.3.53" "192.168.3.54")
 username="ubuntu"
 password="raspberry"
@@ -342,13 +342,49 @@ done
 }
 ```
 
+同样的原理，用`expect`做一个函数用于与服务器自动交互：
+
+```sh
+function ServerRunCmd(){
+ips=("192.168.3.11" "192.168.3.12")
+usernames=("hzw1" "hzw2")
+passwords=("123" "123")
+
+for ((k = 0; k < ${#ips[@]}; k++)); do
+command=$($1 `expr $k + 1`)
+ip=${ips[$k]}
+username=${usernames[$k]}
+password=${passwords[$k]}
+expect << EOF
+    set timeout -1
+    spawn ssh $username@$ip
+    expect {
+        "*yes/no" { send "yes\r"; exp_continue }
+        "*password:" { send "$password\r" }
+    }
+    expect "hzw*@"
+    send "su\r"
+    expect "*Password:"
+    send "$password\r"
+    expect "*#"
+    send "$command\r"
+    expect "*#"
+    send "exit\r"
+    expect "hzw@"
+    send "exit\r"
+    expect eof
+EOF
+done
+}
+```
+
 #### 2020-11-20 重置树莓派集群
 
 ```sh
 function ResetCmd(){
 echo "keadm reset"
 }
-RunCmd ResetCmd
+PiRunCmd ResetCmd
 ```
 
 #### 2020-11-20 初始化树莓派集群
@@ -359,7 +395,7 @@ token="d0284b693d8184b90f16e69aa8358e03ff3f1c776af15954f94c753a2c49c8b2.eyJhbGci
 proxy="http://10.201.154.168:10800/"
 echo "echo -e 'http_proxy=$proxy\nhttps_proxy=$proxy\nuse_proxy = on' > ~/.wgetrc && keadm join --kubeedge-version=1.4.0 --cloudcore-ipport=192.168.3.11:10000 --edgenode-name=edge0$1 --token=$token && rm ~/.wgetrc"
 }
-RunCmd InitCmd
+PiRunCmd InitCmd
 ```
 
 #### 2020-11-20 下载Ingress镜像
@@ -372,7 +408,8 @@ command="$command && docker pull us.gcr.io/k8s-artifacts-prod/ingress-nginx/cont
 command="$command && rm -rf /etc/systemd/system/docker.service.d && systemctl daemon-reload && systemctl restart docker"
 echo "$command"
 }
-RunCmd IngressCmd
+PiRunCmd IngressCmd
+ServerRunCmd IngressCmd
 ```
 
 #### 2020-11-20 设置Dockerhub镜像源
@@ -381,7 +418,8 @@ RunCmd IngressCmd
 function GenCmd(){
 echo "echo '{\\\"registry-mirrors\\\": [\\\"http://192.168.3.4\\\"]}' > /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker"
 }
-RunCmd GenCmd
+PiRunCmd GenCmd
+ServerRunCmd GenCmd
 ```
 
 #### 2020-11-20 下载DNet所需的镜像
@@ -390,7 +428,8 @@ RunCmd GenCmd
 function DownCmd(){
 echo "docker pull yindaheng98/dnet-transmissionunit && docker pull yindaheng98/dnet-computationunit && docker pull rabbitmq:alpine"
 }
-RunCmd GenCmd
+PiRunCmd DownCmd
+ServerRunCmd DownCmd
 ```
 
 #### 2020-11-20 重置Dockerhub镜像源
@@ -399,5 +438,6 @@ RunCmd GenCmd
 function DelCmd(){
 echo "rm /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker"
 }
-RunCmd DelCmd
+PiRunCmd DelCmd
+ServerRunCmd DelCmd
 ```
