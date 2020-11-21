@@ -370,7 +370,7 @@ expect << EOF
     send "$command\r"
     expect "*#"
     send "exit\r"
-    expect "hzw@"
+    expect "hzw*@"
     send "exit\r"
     expect eof
 EOF
@@ -391,7 +391,7 @@ PiRunCmd ResetCmd
 
 ```sh
 function InitCmd(){
-token="d0284b693d8184b90f16e69aa8358e03ff3f1c776af15954f94c753a2c49c8b2.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDU4NjAxODR9.NxYaV2VMAQBcu0sHfiaD3-piit5cdEwXHj9Z5rkXKto"
+token="6da4928430db3b282e7e38374fee472dfeec2f9bc100fcbfa8626dcd8c581fee.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDU5Nzk5ODF9.NY_I9B9ApvEX9MmaeGvM39XT84JhXizf9pyF3jHJiFY"
 proxy="http://10.201.154.168:10800/"
 echo "echo -e 'http_proxy=$proxy\nhttps_proxy=$proxy\nuse_proxy = on' > ~/.wgetrc && keadm join --kubeedge-version=1.4.0 --cloudcore-ipport=192.168.3.11:10000 --edgenode-name=edge0$1 --token=$token && rm ~/.wgetrc"
 }
@@ -416,9 +416,12 @@ ServerRunCmd IngressCmd
 
 ```sh
 function GenCmd(){
-echo "echo '{\\\"registry-mirrors\\\": [\\\"http://192.168.3.4\\\"]}' > /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker"
+echo "echo -e '{\\\"registry-mirrors\\\": \[\\\"http://192.168.3.4\\\"\]}' > /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker"
 }
 PiRunCmd GenCmd
+function GenCmd(){
+echo "echo '{\\\"registry-mirrors\\\": \[\\\"http://192.168.3.4\\\"\],\\\"exec-opts\\\": \[\\\"native.cgroupdriver=systemd\\\"\]}' > /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart docker"
+}
 ServerRunCmd GenCmd
 ```
 
@@ -441,3 +444,72 @@ echo "rm /etc/docker/daemon.json && systemctl daemon-reload && systemctl restart
 PiRunCmd DelCmd
 ServerRunCmd DelCmd
 ```
+
+#### 2020-11-21 不知为何树莓派处又要拉取`k8s.gcr.io/kube-proxy:v1.19.4`
+
+```sh
+function IngressCmd(){
+proxy="http://10.201.154.168:10800/"
+command="mkdir -p /etc/systemd/system/docker.service.d && echo -e '\[Service\]\nEnvironment=\\\"HTTP_PROXY=$proxy\\\" \\\"HTTPS_PROXY=$proxy\\\" \\\"NO_PROXY=\\\"' >> /etc/systemd/system/docker.service.d/http-proxy.conf && systemctl daemon-reload && systemctl restart docker"
+command="$command && docker pull k8s.gcr.io/kube-proxy:v1.19.4"
+command="$command && rm -rf /etc/systemd/system/docker.service.d && systemctl daemon-reload && systemctl restart docker"
+echo "$command"
+}
+PiRunCmd IngressCmd
+```
+
+## 问题与思考
+
+### 镜像分发问题
+
+#### 问题描述
+
+* 深度学习相关的容器基础镜像大小基本都是100M以上，涉及显卡驱动的基础镜像达到1G大小稀松平常
+* 即使不算基础镜像，镜像中的保存神经网络模型的文件大小也很容易达到100M
+* 在边缘计算所假定的云边网速不高的情况下，从云端直接下载镜像速度很慢还容易失败
+
+这显然是一个CDN中内容分发的问题。
+
+#### 目前的解决方案
+
+解决方案：Dockerhub pull-through cache。
+
+Dockerhub pull-through cache 是指部署于本地的、运行于pull-through cache模式的DockerRegistry，它会代替设备从Dockerhub拉取镜像并缓存，下次再拉取同一个镜像的时候就不用再请求Dockerhub了。
+
+在边缘侧，Docker通过配置文件中填入的镜像服务器的接口地址找到pull-through cache的位置。
+
+#### 当前解决方案的扩展形式
+
+##### 级联
+
+Dockerhub pull-through cache在启动时会指定一个镜像源地址，这个地址除了可以是Dockerhub镜像源`https://registry-1.docker.io`外，还可以是另一个Dockerhub pull-through cache，因此它是可以级联的。
+
+级联时，一个pull-through cache可以直接服务于设备，也可以为附近的其他pull-through cache提供服务，以最大程度地避免从云端下载镜像的过程。
+
+##### 并联
+
+一个设备上可以填土多个pull-through cache地址，Docker会自动选择可用的地址下载镜像。
+
+#### 当前方案没有解决的问题
+
+##### 不能主动更新pull-through cache中缓存的镜像
+
+在实际测试中，在云端镜像更新后很长时间，才能从pull-through cache中拉取到最新的镜像。pull-through cache中缓存的镜像似乎是定期清除的，不能主动更新。
+
+##### 只能连接到Dockerhub及Dockerhub pull-through cache
+
+未能找到对其他容器镜像源（例如`https://k8s.gcr.io`）做pull-through cache的方法。
+
+直接在启动时会指定一个镜像源地址为`https://k8s.gcr.io`的方法有待尝试。Docker如何通过不同的地址找对应的pull-through cache地址也是个问题。
+
+###### 另一个思路
+
+自带缓存的代理服务器`https://github.com/rpardini/docker-registry-proxy`。如果能在服务器内再指定下载镜像的代理服务器的话，那这个服务器就是能级联的，解决上面pull-through cache只能连接到Dockerhub的问题。
+
+##### 为pull-through cache设置代理
+
+翻墙下载镜像速度更快。
+
+##### 要手动配置
+
+因为这是涉及到docker配置的问题，因此没法用k8s统一配置，只能写脚本一个个配。
