@@ -186,12 +186,6 @@ kubectl run -i --tty dnet-testunit --image=yindaheng98/dnet-testunit --restart=N
 kubectl delete po dnet-testunit
 ```
 
-### 开始之前先装个ingress-nginx
-
-```shell
-kubectl apply -f https://github.com/kubernetes/ingress-nginx/raw/ingress-nginx-2.11.2/deploy/static/provider/cloud/deploy.yaml
-```
-
 ### 示例一：每个Pod中都包含计算层、传输层和队列系统各一个
 
 示例yaml文件位于`example/one-hot`文件夹。
@@ -203,16 +197,17 @@ kubectl apply -f https://github.com/kubernetes/ingress-nginx/raw/ingress-nginx-2
 部署：
 
 ```sh
-URL=https://raw.githubusercontent.com/yindaheng98/DNet/main/example/one-hot
-kubectl apply -f $URL/dnet-unit-8.yaml
-kubectl apply -f $URL/dnet-unit-12.yaml
-kubectl apply -f $URL/dnet-unit-16.yaml
+URL=https://raw.githubusercontent.com/yindaheng98/DNet/main/example
+kubectl apply -f $URL/one-hot/dnet-unit-8.yaml
+kubectl apply -f $URL/one-hot/dnet-unit-12.yaml
+kubectl apply -f $URL/one-hot/dnet-unit-16.yaml
+kubectl apply -f $URL/dnet-nodeport.yaml
 ```
 
 删除：
 
 ```sh
-kubectl delete ingress dnet-ingress
+kubectl delete svc dnet-nodeport
 kubectl delete svc dnet-unit-8
 kubectl delete deploy dnet-unit-8
 kubectl delete svc dnet-unit-12
@@ -240,13 +235,13 @@ kubectl apply -f $URL/distrib/dnet-transmissionunit-16.yaml
 kubectl apply -f $URL/distrib/dnet-computationunit-16.yaml
 kubectl apply -f $URL/distrib/dnet-computationunit-12.yaml
 kubectl apply -f $URL/distrib/dnet-computationunit-8.yaml
-kubectl apply -f $URL/dnet-ingress.yaml
+kubectl apply -f $URL/dnet-nodeport.yaml
 ```
 
 删除：
 
 ```sh
-kubectl delete ingress dnet-ingress
+kubectl delete svc dnet-nodeport
 kubectl delete deploy dnet-computationunit-8
 kubectl delete deploy dnet-computationunit-12
 kubectl delete deploy dnet-computationunit-16

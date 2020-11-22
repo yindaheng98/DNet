@@ -19,7 +19,7 @@ class TransmissionUnitTestClient(object):
         """
 
         # 连接 rpc 服务器
-        self.channel = grpc.insecure_channel('localhost:8080')
+        self.channel = grpc.insecure_channel(addr)
         self.stub = rpc.DNetStub(self.channel)
 
     def call(self, x, start_layer):
