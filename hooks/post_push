@@ -5,3 +5,4 @@ chmod +x manifest-tool
 
 ./manifest-tool push from-spec dnet-computationunit-manifest.yaml
 ./manifest-tool push from-spec dnet-transmissionunit-manifest.yaml
+./manifest-tool push from-spec dnet-testunit-manifest.yaml

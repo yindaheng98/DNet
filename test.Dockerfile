@@ -1,4 +1,4 @@
-FROM yindaheng98/dnet-computationunit
+FROM yindaheng98/dnet-computationunit:amd64
 COPY test /app/test
 COPY TransmissionUnit /app/TransmissionUnit
 WORKDIR /app/test
