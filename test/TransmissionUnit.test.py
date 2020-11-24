@@ -48,12 +48,11 @@ thres = [0.85, 0.90, 0.90, 0.90,
          0.90, 0.90, 0.90]
 
 if __name__ == "__main__":
+    start_time = time.time()
 
     # 测试集推断
     for i, (test_in, test_labels) in enumerate(testloader):
         net.eval()
-        # test_in, test_labels = test_in.cuda(), test_labels.cuda()  # 数据载入GPU
-        start = time.time()
 
         # inception v3 第一分块推断
         inter_data, outputs = net(test_in, device_exit)
@@ -62,10 +61,20 @@ if __name__ == "__main__":
         prob, category = torch.max(outputs.data, 1)
 
         # 终端出口小于16且置信度低于阈值则发往边缘
-        if inter_data is not False and prob.tolist()[0] < thres[device_exit-1]:
-            print('prob=%f<%f, Send to RabbitMQ' % (prob.tolist()[0], thres[device_exit-1]))
+        if inter_data is False:
+            print("inter_data is False, don't send, category=%s"%category)
+        elif prob.tolist()[0] < thres[device_exit-1]:
+            print('prob=%f<%f, Send to %s' % (prob.tolist()[0], thres[device_exit-1], options.address))
             client.call(inter_data, device_exit)
         else:
             print('prob=%f>%f, category=%s' % (prob.tolist()[0], thres[device_exit-1], category))
         if i > options.number:
             break
+    
+    end_time = time.time()
+    print("总结")
+    print("测试开始于%s"%time.asctime(time.localtime(start_time)))
+    print("测试结束于%s"%time.asctime(time.localtime(end_time)))
+    print("测试耗时%.4f秒"%(end_time-start_time))
+    print("测试次数%d"%options.number)
+    print("单个测试平均用时%.4f秒"%((end_time-start_time)/options.number))
