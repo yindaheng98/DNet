@@ -13,6 +13,23 @@ spec:
       labels:
         app: dnet-computationunit-16
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingRequiredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: dnet-role
+                  operator: In
+                  values:
+                    - cloud
+        podAntiAffinity:
+          requiredDuringSchedulingRequiredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values: [dnet-computationunit-16]
+              topologyKey: kubernetes.io/hostname
       containers:
         - name: dnet-computationunit
           image: yindaheng98/dnet-computationunit

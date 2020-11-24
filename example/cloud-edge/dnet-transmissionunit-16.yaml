@@ -13,6 +13,15 @@ spec:
       labels:
         app: dnet-transmissionunit-16
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingRequiredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: dnet-role
+                  operator: In
+                  values:
+                    - cloud
       containers:
         - name: dnet-transmissionunit
           image: yindaheng98/dnet-transmissionunit

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: dnet-computationunit-10
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: dnet-computationunit-10
@@ -13,6 +13,23 @@ spec:
       labels:
         app: dnet-computationunit-10
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: dnet-role
+                  operator: In
+                  values:
+                    - edge
+        podAntiAffinity:
+          requiredDuringSchedulingRequiredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values: [dnet-computationunit-10]
+              topologyKey: kubernetes.io/hostname
       containers:
         - name: dnet-computationunit
           image: yindaheng98/dnet-computationunit
