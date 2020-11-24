@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: dnet-computationunit-16
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: dnet-computationunit-16
@@ -20,8 +20,6 @@ spec:
           args:
             - "ComputationUnit"
             - "-a"
-            - "dnet-queue"
+            - "dnet-unit-16"
             - "-e"
             - "16"
-            - "-q"
-            - "q16"

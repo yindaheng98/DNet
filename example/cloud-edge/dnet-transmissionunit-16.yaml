@@ -22,11 +22,8 @@ spec:
           args:
             - "run"
             - "start"
-            - "--"
-            - "-a"
-            - "amqp://dnet-queue"
-            - "-q"
-            - "q16"
+        - name: dnet-middleware
+          image: rabbitmq:alpine
 ---
 apiVersion: v1
 kind: Service
@@ -40,3 +37,11 @@ spec:
     protocol: TCP
     port: 8080
     targetPort: 8080
+  - name: dnet-queue
+    protocol: TCP
+    port: 5672
+    targetPort: 5672
+  - name: dnet-queue-web
+    protocol: TCP
+    port: 15672
+    targetPort: 15672

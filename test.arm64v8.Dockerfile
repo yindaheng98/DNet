@@ -4,5 +4,6 @@ COPY --from=qemu /usr/bin/qemu-aarch64-static /usr/bin
 COPY test /app/test
 COPY TransmissionUnit /app/TransmissionUnit
 WORKDIR /app/test
-RUN python load_data.py
+RUN python load_data.py && \
+    rm /usr/bin/qemu-aarch64-static
 CMD ["python", "TransmissionUnit.test.py"]

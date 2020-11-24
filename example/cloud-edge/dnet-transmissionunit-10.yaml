@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dnet-transmissionunit-12
+  name: dnet-transmissionunit-10
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dnet-transmissionunit-12
+      app: dnet-transmissionunit-10
   template:
     metadata:
-      name: dnet-transmissionunit-12-pod
+      name: dnet-transmissionunit-10-pod
       labels:
-        app: dnet-transmissionunit-12
+        app: dnet-transmissionunit-10
     spec:
       containers:
         - name: dnet-transmissionunit
@@ -23,22 +23,28 @@ spec:
             - "run"
             - "start"
             - "--"
-            - "-a"
-            - "amqp://dnet-queue"
-            - "-q"
-            - "q12"
             - "-n"
             - "dnet-unit-16:8080"
+        - name: dnet-middleware
+          image: rabbitmq:alpine
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: dnet-unit-12
+  name: dnet-unit-10
 spec:
   selector:
-    app: dnet-transmissionunit-12
+    app: dnet-transmissionunit-10
   ports:
   - name: dnet-transmissionunit
     protocol: TCP
     port: 8080
     targetPort: 8080
+  - name: dnet-queue
+    protocol: TCP
+    port: 5672
+    targetPort: 5672
+  - name: dnet-queue-web
+    protocol: TCP
+    port: 15672
+    targetPort: 15672

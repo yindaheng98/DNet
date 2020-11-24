@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dnet-computationunit-12
+  name: dnet-computationunit-10
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
-      app: dnet-computationunit-12
+      app: dnet-computationunit-10
   template:
     metadata:
-      name: dnet-computationunit-12-pod
+      name: dnet-computationunit-10-pod
       labels:
-        app: dnet-computationunit-12
+        app: dnet-computationunit-10
     spec:
       containers:
         - name: dnet-computationunit
@@ -20,8 +20,6 @@ spec:
           args:
             - "ComputationUnit"
             - "-a"
-            - "dnet-queue"
+            - "dnet-unit-10"
             - "-e"
-            - "12"
-            - "-q"
-            - "q12"
+            - "10"
