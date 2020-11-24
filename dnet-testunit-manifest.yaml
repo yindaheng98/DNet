@@ -1,10 +1,10 @@
-image: yindaheng98/dnet-computationunit:latest
+image: yindaheng98/dnet-testunit:latest
 manifests:
-  - image: yindaheng98/dnet-computationunit:amd64
+  - image: yindaheng98/dnet-testunit:amd64
     platform:
       architecture: amd64
       os: linux
-  - image: yindaheng98/dnet-computationunit:arm64v8
+  - image: yindaheng98/dnet-testunit:arm64v8
     platform:
       architecture: arm64
       os: linux
