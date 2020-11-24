@@ -385,7 +385,7 @@ PiRunCmd ResetCmd
 
 ```sh
 function InitCmd(){
-token="6da4928430db3b282e7e38374fee472dfeec2f9bc100fcbfa8626dcd8c581fee.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDU5Nzk5ODF9.NY_I9B9ApvEX9MmaeGvM39XT84JhXizf9pyF3jHJiFY"
+token="d0436bc1057c131eb4a34ee9abf976792ca9d505918f57bc759156b9001bcb96.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDYyMDU1NDV9.b4pEm66AqWcRNnjMZcBgAQHC9YQqDUg6MABXmDd4yXk"
 proxy="http://10.201.154.168:10800/"
 echo "echo -e 'http_proxy=$proxy\nhttps_proxy=$proxy\nuse_proxy = on' > ~/.wgetrc && keadm join --kubeedge-version=1.4.0 --cloudcore-ipport=192.168.3.11:10000 --edgenode-name=edge0$1 --token=$token && rm ~/.wgetrc"
 }
@@ -423,7 +423,7 @@ ServerRunCmd GenCmd
 
 ```sh
 function DownCmd(){
-echo "docker pull yindaheng98/dnet-transmissionunit && docker pull yindaheng98/dnet-computationunit && docker pull rabbitmq:alpine"
+echo "docker pull yindaheng98/dnet-transmissionunit && docker pull yindaheng98/dnet-computationunit && docker pull yindaheng98/dnet-testunit && docker pull rabbitmq:alpine"
 }
 PiRunCmd DownCmd
 ServerRunCmd DownCmd
@@ -500,7 +500,16 @@ Dockerhub pull-through cache在启动时会指定一个镜像源地址，这个�
 
 ###### 另一个思路
 
-自带缓存的代理服务器`https://github.com/rpardini/docker-registry-proxy`。如果能在服务器内再指定下载镜像的代理服务器的话，那这个服务器就是能级联的，解决上面pull-through cache只能连接到Dockerhub的问题。
+自带缓存的代理服务器`https://github.com/rpardini/docker-registry-proxy`。如果能在服务器内再指定下载镜像的代理服务器的话，那这个服务器就是能级联的，能解决上面pull-through cache只能连接到Dockerhub的问题。
+
+```sh
+proxy='http://10.201.154.168:10800'
+wget $proxy/ca.crt -O /usr/share/ca-certificates/docker_registry_proxy.crt
+update-ca-certificates --fresh
+mkdir -p /etc/systemd/system/docker.service.d && echo -e "[Service]\nEnvironment=\"HTTP_PROXY=$proxy\" \"HTTPS_PROXY=$proxy\" \"NO_PROXY=\"" > /etc/systemd/system/docker.service.d/http-proxy.conf && systemctl daemon-reload && systemctl restart docker
+systemctl daemon-reload
+systemctl restart docker
+```
 
 ##### 为pull-through cache设置代理
 
