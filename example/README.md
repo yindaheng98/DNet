@@ -84,6 +84,6 @@ kubectl delete deploy dnet-computationunit-10
 kubectl delete deploy dnet-computationunit-16
 kubectl delete svc dnet-unit-10
 kubectl delete deploy dnet-transmissionunit-10
-kubectl delete svc dnet-unit-10
+kubectl delete svc dnet-unit-16
 kubectl delete deploy dnet-transmissionunit-16
 ```
