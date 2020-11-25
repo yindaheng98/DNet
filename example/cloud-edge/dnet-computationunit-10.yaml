@@ -15,7 +15,7 @@ spec:
     spec:
       affinity:
         nodeAffinity:
-          requiredDuringSchedulingRequiredDuringExecution:
+          requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
                 - key: dnet-role
