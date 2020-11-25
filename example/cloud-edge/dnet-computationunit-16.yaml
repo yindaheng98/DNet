@@ -23,7 +23,7 @@ spec:
                   values:
                     - cloud
         podAntiAffinity:
-          requiredDuringSchedulingRequiredDuringExecution:
+          requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchExpressions:
                   - key: app

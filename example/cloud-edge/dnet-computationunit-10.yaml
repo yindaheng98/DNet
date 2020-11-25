@@ -15,7 +15,7 @@ spec:
     spec:
       affinity:
         nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
+          requiredDuringSchedulingRequiredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
                 - key: dnet-role
@@ -23,7 +23,7 @@ spec:
                   values:
                     - edge
         podAntiAffinity:
-          requiredDuringSchedulingRequiredDuringExecution:
+          requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchExpressions:
                   - key: app
