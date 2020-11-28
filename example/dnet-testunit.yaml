@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dnet-testunit
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dnet-testunit
+  template:
+    metadata:
+      name: dnet-testunit-pod
+      labels:
+        app: dnet-testunit
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values: [dnet-testunit]
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: dnet-testunit
+          image: yindaheng98/dnet-testunit
+          command: ["python"]
+          args: ["TransmissionUnit.test.py", "-a", "dnet:8080"]

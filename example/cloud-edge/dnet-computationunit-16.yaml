@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dnet-computationunit-16
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dnet-computationunit-16
+  template:
+    metadata:
+      name: dnet-computationunit-16-pod
+      labels:
+        app: dnet-computationunit-16
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: dnet-role
+                  operator: In
+                  values:
+                    - cloud
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values: [dnet-computationunit-16]
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: dnet-computationunit
+          image: yindaheng98/dnet-computationunit
+          command: ["python"]
+          args:
+            - "ComputationUnit"
+            - "-a"
+            - "dnet-unit-16"
+            - "-e"
+            - "16"

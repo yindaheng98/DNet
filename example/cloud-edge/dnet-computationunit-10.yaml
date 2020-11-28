@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dnet-computationunit-10
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: dnet-computationunit-10
+  template:
+    metadata:
+      name: dnet-computationunit-10-pod
+      labels:
+        app: dnet-computationunit-10
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: dnet-role
+                  operator: In
+                  values:
+                    - edge
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values: [dnet-computationunit-10]
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: dnet-computationunit
+          image: yindaheng98/dnet-computationunit
+          command: ["python"]
+          args:
+            - "ComputationUnit"
+            - "-a"
+            - "dnet-unit-10"
+            - "-e"
+            - "10"
