@@ -158,7 +158,7 @@ cd test
 python load_data.py
 # 加载数据集
 
-python TransmissionUnit.test.py -a 192.168.56.1:8080
+python TransmissionUnit.test.py -a localhost:8080
 ```
 
 ### Docker运行
