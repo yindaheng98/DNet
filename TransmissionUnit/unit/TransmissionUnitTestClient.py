@@ -1,7 +1,7 @@
 import pickle
 import grpc
 import ComputationMessage_pb2 as pb
-import TransmissionMessage_pb2 as tpb
+import QstatusMessage_pb2 as qpb
 import TransmissionUnit_pb2_grpc as rpc
 
 """
@@ -11,7 +11,10 @@ import TransmissionUnit_pb2_grpc as rpc
 
 
 class TransmissionUnitTestClient(object):
-    """用于测试与传输层之间连接客户端类"""
+    """
+    用于测试与传输层之间连接客户端类
+    类方法和grpc/TransmissionUnit.proto中的定义一一对应
+    """
 
     def __init__(self, addr="localhost:8080"):
         """
@@ -28,6 +31,7 @@ class TransmissionUnitTestClient(object):
         向TransmissionUnit发送gRPC请求，并等待响应
         @params x
         @params start_layer
+        @return 返回值定义见grpc/TransmissionUnit.proto
         """
         request = pb.ComputationRequest()
         request.start_layer = start_layer
@@ -37,8 +41,9 @@ class TransmissionUnitTestClient(object):
 
     def Qstatus(self):
         """
-        向TransmissionUnit查询当前的队列长度
+        向TransmissionUnit查询当前的队列长度和消费者（即计算层单元）数量
+        @return 返回值定义见grpc/TransmissionUnit.proto
         """
-        request = tpb.QstatusRequest()
+        request = qpb.QstatusRequest()
         response = self.stub.Qstatus(request)
         return response

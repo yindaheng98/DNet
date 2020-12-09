@@ -65,7 +65,12 @@ if __name__ == "__main__":
             print("inter_data is False, don't send, category=%s"%category)
         elif prob.tolist()[0] < thres[device_exit-1]:
             print('prob=%f<%f, Send to %s' % (prob.tolist()[0], thres[device_exit-1], options.address))
-            client.call(inter_data, device_exit)
+            print('正在查询队列状态......')
+            status = client.Qstatus()
+            print('当前服务器中队列长度为%d, 有%d个计算层单元' % (status.qlength, status.consumer))
+            print('正在发送计算请求......')
+            response = client.Compute(inter_data, device_exit)
+            print('收到计算结果%s'%str(response)[0:40])
         else:
             print('prob=%f>%f, category=%s' % (prob.tolist()[0], thres[device_exit-1], category))
         if i > options.number:
