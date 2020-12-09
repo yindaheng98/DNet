@@ -1,6 +1,7 @@
-var pb = require("./ComputationMessage_pb")
+var pb = require("./ComputationMessage_pb");
 var amqp = require('amqplib/callback_api');
 var UUID = require('uuid');
+var Channel = require("./connection");
 
 /**
  * 生成一个ComputationUnit客户端
@@ -9,18 +10,7 @@ var UUID = require('uuid');
  * @return 返回ComputationUnit客户端调用函数，输入ComputationRequest，使用callback进行异步输出ComputationResponse
  */
 module.exports = async function ComputationUnitClient(amqp_addr, queue_name) {
-    var connection = await new Promise((resolve, reject) => {
-        amqp.connect(amqp_addr, function (err, connection) {
-            if (err) return reject(err);
-            return resolve(connection);
-        });
-    });
-    var channel = await new Promise((resolve, reject) => {
-        connection.createChannel(function (err, channel) {
-            if (err) return reject(err);
-            return resolve(channel);
-        });
-    });
+    var channel = await Channel(amqp_addr);
     var queue_res = await new Promise((resolve, reject) => {
         channel.assertQueue('', { exclusive: true }, function (err, queue) {
             if (err) return reject(err);
