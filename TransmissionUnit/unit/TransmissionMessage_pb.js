@@ -189,7 +189,8 @@ proto.unit.QlengthResponse.prototype.toObject = function(opt_includeInstance) {
  */
 proto.unit.QlengthResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    qlength: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    qlength: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    consumer: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -230,6 +231,10 @@ proto.unit.QlengthResponse.deserializeBinaryFromReader = function(msg, reader) {
       var value = /** @type {number} */ (reader.readUint64());
       msg.setQlength(value);
       break;
+    case 2:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setConsumer(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -266,11 +271,18 @@ proto.unit.QlengthResponse.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getConsumer();
+  if (f !== 0) {
+    writer.writeUint64(
+      2,
+      f
+    );
+  }
 };
 
 
 /**
- * optional uint64 Qlength = 1;
+ * optional uint64 qlength = 1;
  * @return {number}
  */
 proto.unit.QlengthResponse.prototype.getQlength = function() {
@@ -284,6 +296,24 @@ proto.unit.QlengthResponse.prototype.getQlength = function() {
  */
 proto.unit.QlengthResponse.prototype.setQlength = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * optional uint64 consumer = 2;
+ * @return {number}
+ */
+proto.unit.QlengthResponse.prototype.getConsumer = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.unit.QlengthResponse} returns this
+ */
+proto.unit.QlengthResponse.prototype.setConsumer = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
