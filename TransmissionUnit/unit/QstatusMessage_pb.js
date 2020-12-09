@@ -1,4 +1,4 @@
-// source: TransmissionMessage.proto
+// source: QstatusMessage.proto
 /**
  * @fileoverview
  * @enhanceable

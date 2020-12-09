@@ -1,7 +1,7 @@
 syntax = "proto3";
 package unit;
 import "ComputationMessage.proto";
-import "TransmissionMessage.proto";
+import "QstatusMessage.proto";
 service DNet {
     rpc Compute (unit.ComputationRequest) returns (unit.ComputationResponse);
     rpc Qstatus (unit.QstatusRequest) returns (unit.QstatusResponse);

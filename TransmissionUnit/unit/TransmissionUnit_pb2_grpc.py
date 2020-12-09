@@ -3,7 +3,7 @@
 import grpc
 
 import ComputationMessage_pb2 as ComputationMessage__pb2
-import TransmissionMessage_pb2 as TransmissionMessage__pb2
+import QstatusMessage_pb2 as QstatusMessage__pb2
 
 
 class DNetStub(object):
@@ -22,8 +22,8 @@ class DNetStub(object):
                 )
         self.Qstatus = channel.unary_unary(
                 '/unit.DNet/Qstatus',
-                request_serializer=TransmissionMessage__pb2.QstatusRequest.SerializeToString,
-                response_deserializer=TransmissionMessage__pb2.QstatusResponse.FromString,
+                request_serializer=QstatusMessage__pb2.QstatusRequest.SerializeToString,
+                response_deserializer=QstatusMessage__pb2.QstatusResponse.FromString,
                 )
 
 
@@ -52,8 +52,8 @@ def add_DNetServicer_to_server(servicer, server):
             ),
             'Qstatus': grpc.unary_unary_rpc_method_handler(
                     servicer.Qstatus,
-                    request_deserializer=TransmissionMessage__pb2.QstatusRequest.FromString,
-                    response_serializer=TransmissionMessage__pb2.QstatusResponse.SerializeToString,
+                    request_deserializer=QstatusMessage__pb2.QstatusRequest.FromString,
+                    response_serializer=QstatusMessage__pb2.QstatusResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -94,7 +94,7 @@ class DNet(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/unit.DNet/Qstatus',
-            TransmissionMessage__pb2.QstatusRequest.SerializeToString,
-            TransmissionMessage__pb2.QstatusResponse.FromString,
+            QstatusMessage__pb2.QstatusRequest.SerializeToString,
+            QstatusMessage__pb2.QstatusResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

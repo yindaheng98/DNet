@@ -1,6 +1,7 @@
 import pickle
 import grpc
 import ComputationMessage_pb2 as pb
+import TransmissionMessage_pb2 as tpb
 import TransmissionUnit_pb2_grpc as rpc
 
 """
@@ -22,7 +23,7 @@ class TransmissionUnitTestClient(object):
         self.channel = grpc.insecure_channel(addr)
         self.stub = rpc.DNetStub(self.channel)
 
-    def call(self, x, start_layer):
+    def Compute(self, x, start_layer):
         """
         向TransmissionUnit发送gRPC请求，并等待响应
         @params x
@@ -31,6 +32,13 @@ class TransmissionUnitTestClient(object):
         request = pb.ComputationRequest()
         request.start_layer = start_layer
         request.x = pickle.dumps(x)
-        print("准备发送计算请求%s" % (str(request)[0:40]))
         response = self.stub.Compute(request)
-        print("已经收到计算结果%s" % (str(response)[0:40]))
+        return response
+
+    def Qstatus(self):
+        """
+        向TransmissionUnit查询当前的队列长度
+        """
+        request = tpb.QstatusRequest()
+        response = self.stub.Qstatus(request)
+        return response

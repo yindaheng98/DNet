@@ -3,7 +3,7 @@
 'use strict';
 var grpc = require('grpc');
 var ComputationMessage_pb = require('./ComputationMessage_pb.js');
-var TransmissionMessage_pb = require('./TransmissionMessage_pb.js');
+var QstatusMessage_pb = require('./QstatusMessage_pb.js');
 
 function serialize_unit_ComputationRequest(arg) {
   if (!(arg instanceof ComputationMessage_pb.ComputationRequest)) {
@@ -28,25 +28,25 @@ function deserialize_unit_ComputationResponse(buffer_arg) {
 }
 
 function serialize_unit_QstatusRequest(arg) {
-  if (!(arg instanceof TransmissionMessage_pb.QstatusRequest)) {
+  if (!(arg instanceof QstatusMessage_pb.QstatusRequest)) {
     throw new Error('Expected argument of type unit.QstatusRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_unit_QstatusRequest(buffer_arg) {
-  return TransmissionMessage_pb.QstatusRequest.deserializeBinary(new Uint8Array(buffer_arg));
+  return QstatusMessage_pb.QstatusRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_unit_QstatusResponse(arg) {
-  if (!(arg instanceof TransmissionMessage_pb.QstatusResponse)) {
+  if (!(arg instanceof QstatusMessage_pb.QstatusResponse)) {
     throw new Error('Expected argument of type unit.QstatusResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_unit_QstatusResponse(buffer_arg) {
-  return TransmissionMessage_pb.QstatusResponse.deserializeBinary(new Uint8Array(buffer_arg));
+  return QstatusMessage_pb.QstatusResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
@@ -66,8 +66,8 @@ var DNetService = exports.DNetService = {
     path: '/unit.DNet/Qstatus',
     requestStream: false,
     responseStream: false,
-    requestType: TransmissionMessage_pb.QstatusRequest,
-    responseType: TransmissionMessage_pb.QstatusResponse,
+    requestType: QstatusMessage_pb.QstatusRequest,
+    responseType: QstatusMessage_pb.QstatusResponse,
     requestSerialize: serialize_unit_QstatusRequest,
     requestDeserialize: deserialize_unit_QstatusRequest,
     responseSerialize: serialize_unit_QstatusResponse,
