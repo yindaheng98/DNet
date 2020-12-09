@@ -1,9 +1,9 @@
 syntax = "proto3";
 package unit;
-message QlengthRequest { //队列长度请求
+message QstatusRequest { //队列长度请求
 }
 
-message QlengthResponse { //队列长度响应
+message QstatusResponse { //队列长度响应
     uint64 qlength = 1; //队列长度
     uint64 consumer = 2; //连接的计算层数量
 }

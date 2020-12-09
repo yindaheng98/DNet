@@ -20,10 +20,10 @@ class DNetStub(object):
                 request_serializer=ComputationMessage__pb2.ComputationRequest.SerializeToString,
                 response_deserializer=ComputationMessage__pb2.ComputationResponse.FromString,
                 )
-        self.Qlength = channel.unary_unary(
-                '/unit.DNet/Qlength',
-                request_serializer=TransmissionMessage__pb2.QlengthRequest.SerializeToString,
-                response_deserializer=TransmissionMessage__pb2.QlengthResponse.FromString,
+        self.Qstatus = channel.unary_unary(
+                '/unit.DNet/Qstatus',
+                request_serializer=TransmissionMessage__pb2.QstatusRequest.SerializeToString,
+                response_deserializer=TransmissionMessage__pb2.QstatusResponse.FromString,
                 )
 
 
@@ -36,7 +36,7 @@ class DNetServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Qlength(self, request, context):
+    def Qstatus(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -50,10 +50,10 @@ def add_DNetServicer_to_server(servicer, server):
                     request_deserializer=ComputationMessage__pb2.ComputationRequest.FromString,
                     response_serializer=ComputationMessage__pb2.ComputationResponse.SerializeToString,
             ),
-            'Qlength': grpc.unary_unary_rpc_method_handler(
-                    servicer.Qlength,
-                    request_deserializer=TransmissionMessage__pb2.QlengthRequest.FromString,
-                    response_serializer=TransmissionMessage__pb2.QlengthResponse.SerializeToString,
+            'Qstatus': grpc.unary_unary_rpc_method_handler(
+                    servicer.Qstatus,
+                    request_deserializer=TransmissionMessage__pb2.QstatusRequest.FromString,
+                    response_serializer=TransmissionMessage__pb2.QstatusResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -83,7 +83,7 @@ class DNet(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Qlength(request,
+    def Qstatus(request,
             target,
             options=(),
             channel_credentials=None,
@@ -93,8 +93,8 @@ class DNet(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/unit.DNet/Qlength',
-            TransmissionMessage__pb2.QlengthRequest.SerializeToString,
-            TransmissionMessage__pb2.QlengthResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/unit.DNet/Qstatus',
+            TransmissionMessage__pb2.QstatusRequest.SerializeToString,
+            TransmissionMessage__pb2.QstatusResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

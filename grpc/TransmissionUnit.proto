@@ -4,5 +4,5 @@ import "ComputationMessage.proto";
 import "TransmissionMessage.proto";
 service DNet {
     rpc Compute (unit.ComputationRequest) returns (unit.ComputationResponse);
-    rpc Qlength (unit.QlengthRequest) returns (unit.QlengthResponse);
+    rpc Qstatus (unit.QstatusRequest) returns (unit.QstatusResponse);
 }

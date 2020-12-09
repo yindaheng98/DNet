@@ -27,26 +27,26 @@ function deserialize_unit_ComputationResponse(buffer_arg) {
   return ComputationMessage_pb.ComputationResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_unit_QlengthRequest(arg) {
-  if (!(arg instanceof TransmissionMessage_pb.QlengthRequest)) {
-    throw new Error('Expected argument of type unit.QlengthRequest');
+function serialize_unit_QstatusRequest(arg) {
+  if (!(arg instanceof TransmissionMessage_pb.QstatusRequest)) {
+    throw new Error('Expected argument of type unit.QstatusRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_unit_QlengthRequest(buffer_arg) {
-  return TransmissionMessage_pb.QlengthRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_unit_QstatusRequest(buffer_arg) {
+  return TransmissionMessage_pb.QstatusRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_unit_QlengthResponse(arg) {
-  if (!(arg instanceof TransmissionMessage_pb.QlengthResponse)) {
-    throw new Error('Expected argument of type unit.QlengthResponse');
+function serialize_unit_QstatusResponse(arg) {
+  if (!(arg instanceof TransmissionMessage_pb.QstatusResponse)) {
+    throw new Error('Expected argument of type unit.QstatusResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_unit_QlengthResponse(buffer_arg) {
-  return TransmissionMessage_pb.QlengthResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_unit_QstatusResponse(buffer_arg) {
+  return TransmissionMessage_pb.QstatusResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
@@ -62,16 +62,16 @@ var DNetService = exports.DNetService = {
     responseSerialize: serialize_unit_ComputationResponse,
     responseDeserialize: deserialize_unit_ComputationResponse,
   },
-  qlength: {
-    path: '/unit.DNet/Qlength',
+  qstatus: {
+    path: '/unit.DNet/Qstatus',
     requestStream: false,
     responseStream: false,
-    requestType: TransmissionMessage_pb.QlengthRequest,
-    responseType: TransmissionMessage_pb.QlengthResponse,
-    requestSerialize: serialize_unit_QlengthRequest,
-    requestDeserialize: deserialize_unit_QlengthRequest,
-    responseSerialize: serialize_unit_QlengthResponse,
-    responseDeserialize: deserialize_unit_QlengthResponse,
+    requestType: TransmissionMessage_pb.QstatusRequest,
+    responseType: TransmissionMessage_pb.QstatusResponse,
+    requestSerialize: serialize_unit_QstatusRequest,
+    requestDeserialize: deserialize_unit_QstatusRequest,
+    responseSerialize: serialize_unit_QstatusResponse,
+    responseDeserialize: deserialize_unit_QstatusResponse,
   },
 };
 

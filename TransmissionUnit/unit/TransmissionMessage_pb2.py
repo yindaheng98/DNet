@@ -19,15 +19,15 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x19TransmissionMessage.proto\x12\x04unit\"\x10\n\x0eQlengthRequest\"4\n\x0fQlengthResponse\x12\x0f\n\x07qlength\x18\x01 \x01(\x04\x12\x10\n\x08\x63onsumer\x18\x02 \x01(\x04\x62\x06proto3'
+  serialized_pb=b'\n\x19TransmissionMessage.proto\x12\x04unit\"\x10\n\x0eQstatusRequest\"4\n\x0fQstatusResponse\x12\x0f\n\x07qlength\x18\x01 \x01(\x04\x12\x10\n\x08\x63onsumer\x18\x02 \x01(\x04\x62\x06proto3'
 )
 
 
 
 
-_QLENGTHREQUEST = _descriptor.Descriptor(
-  name='QlengthRequest',
-  full_name='unit.QlengthRequest',
+_QSTATUSREQUEST = _descriptor.Descriptor(
+  name='QstatusRequest',
+  full_name='unit.QstatusRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -50,23 +50,23 @@ _QLENGTHREQUEST = _descriptor.Descriptor(
 )
 
 
-_QLENGTHRESPONSE = _descriptor.Descriptor(
-  name='QlengthResponse',
-  full_name='unit.QlengthResponse',
+_QSTATUSRESPONSE = _descriptor.Descriptor(
+  name='QstatusResponse',
+  full_name='unit.QstatusResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='qlength', full_name='unit.QlengthResponse.qlength', index=0,
+      name='qlength', full_name='unit.QstatusResponse.qlength', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='consumer', full_name='unit.QlengthResponse.consumer', index=1,
+      name='consumer', full_name='unit.QstatusResponse.consumer', index=1,
       number=2, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -88,23 +88,23 @@ _QLENGTHRESPONSE = _descriptor.Descriptor(
   serialized_end=105,
 )
 
-DESCRIPTOR.message_types_by_name['QlengthRequest'] = _QLENGTHREQUEST
-DESCRIPTOR.message_types_by_name['QlengthResponse'] = _QLENGTHRESPONSE
+DESCRIPTOR.message_types_by_name['QstatusRequest'] = _QSTATUSREQUEST
+DESCRIPTOR.message_types_by_name['QstatusResponse'] = _QSTATUSRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-QlengthRequest = _reflection.GeneratedProtocolMessageType('QlengthRequest', (_message.Message,), {
-  'DESCRIPTOR' : _QLENGTHREQUEST,
+QstatusRequest = _reflection.GeneratedProtocolMessageType('QstatusRequest', (_message.Message,), {
+  'DESCRIPTOR' : _QSTATUSREQUEST,
   '__module__' : 'TransmissionMessage_pb2'
-  # @@protoc_insertion_point(class_scope:unit.QlengthRequest)
+  # @@protoc_insertion_point(class_scope:unit.QstatusRequest)
   })
-_sym_db.RegisterMessage(QlengthRequest)
+_sym_db.RegisterMessage(QstatusRequest)
 
-QlengthResponse = _reflection.GeneratedProtocolMessageType('QlengthResponse', (_message.Message,), {
-  'DESCRIPTOR' : _QLENGTHRESPONSE,
+QstatusResponse = _reflection.GeneratedProtocolMessageType('QstatusResponse', (_message.Message,), {
+  'DESCRIPTOR' : _QSTATUSRESPONSE,
   '__module__' : 'TransmissionMessage_pb2'
-  # @@protoc_insertion_point(class_scope:unit.QlengthResponse)
+  # @@protoc_insertion_point(class_scope:unit.QstatusResponse)
   })
-_sym_db.RegisterMessage(QlengthResponse)
+_sym_db.RegisterMessage(QstatusResponse)
 
 
 # @@protoc_insertion_point(module_scope)
