@@ -3,6 +3,7 @@
 import grpc
 
 import ComputationMessage_pb2 as ComputationMessage__pb2
+import TransmissionMessage_pb2 as TransmissionMessage__pb2
 
 
 class DNetStub(object):
@@ -19,12 +20,23 @@ class DNetStub(object):
                 request_serializer=ComputationMessage__pb2.ComputationRequest.SerializeToString,
                 response_deserializer=ComputationMessage__pb2.ComputationResponse.FromString,
                 )
+        self.Qlength = channel.unary_unary(
+                '/unit.DNet/Qlength',
+                request_serializer=TransmissionMessage__pb2.QlengthRequest.SerializeToString,
+                response_deserializer=TransmissionMessage__pb2.QlengthResponse.FromString,
+                )
 
 
 class DNetServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def Compute(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Qlength(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +49,11 @@ def add_DNetServicer_to_server(servicer, server):
                     servicer.Compute,
                     request_deserializer=ComputationMessage__pb2.ComputationRequest.FromString,
                     response_serializer=ComputationMessage__pb2.ComputationResponse.SerializeToString,
+            ),
+            'Qlength': grpc.unary_unary_rpc_method_handler(
+                    servicer.Qlength,
+                    request_deserializer=TransmissionMessage__pb2.QlengthRequest.FromString,
+                    response_serializer=TransmissionMessage__pb2.QlengthResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +79,22 @@ class DNet(object):
         return grpc.experimental.unary_unary(request, target, '/unit.DNet/Compute',
             ComputationMessage__pb2.ComputationRequest.SerializeToString,
             ComputationMessage__pb2.ComputationResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Qlength(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/unit.DNet/Qlength',
+            TransmissionMessage__pb2.QlengthRequest.SerializeToString,
+            TransmissionMessage__pb2.QlengthResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
