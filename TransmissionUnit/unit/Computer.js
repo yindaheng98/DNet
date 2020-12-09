@@ -1,4 +1,4 @@
-var rpc_Client = require("./client")
+var rpc_Client = require("./grpcClient")
 var pb = require('./ComputationMessage_pb');
 var cu_Client = require("./ComputationUnitClient");
 
