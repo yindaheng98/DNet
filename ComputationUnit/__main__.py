@@ -41,7 +41,7 @@ def main():  # 在启动时从命令行或者系统变量中获取MQ系统的IP�
     print(' [x] RabbitMQ: queue name is %s' % options.queuename)
 
     print('Inception will exit at layer %d ..........' % options.exitlayer)
-    cu = ComputationUnit(ComputationCore(net, thres, 10),
+    cu = ComputationUnit(ComputationCore(net, thres, options.exitlayer),
                          conn_params, options.queuename)
     cu.start()
 
