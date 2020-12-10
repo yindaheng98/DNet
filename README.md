@@ -74,7 +74,7 @@ pip install -r ./ComputationUnit/requirements.txt
 pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio===0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
 #装好环境
 
-docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:alpine
+docker run --rm -dit --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:alpine
 python ComputationUnit -a 192.168.1.2 -q q8 -e 8 # 连到192.168.1.2、队列名q8、从第8层退出
 python ComputationUnit -a 192.168.1.2 -q q12 -e 12 # 连到192.168.1.2、队列名q12、从第12层退出
 python ComputationUnit -a 192.168.1.2 -q q16 -e 16 # 连到192.168.1.2、队列名q16、从第16层退出
@@ -85,10 +85,18 @@ python ComputationUnit -a 192.168.1.2 -q q16 -e 16 # 连到192.168.1.2、队列�
 Dockerhub地址是[yindaheng98/dnet-computationunit](https://hub.docker.com/repository/docker/yindaheng98/dnet-computationunit)。内置模型文件无需额外下载，运行指令同上。
 
 ```sh
-docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:alpine
-docker run --rm -it yindaheng98/dnet-computationunit python ComputationUnit -a 192.168.56.1 -q q8 -e 8 # 连到192.168.56.1、队列名q8、从第8层退出
-docker run --rm -it yindaheng98/dnet-computationunit python ComputationUnit -a 192.168.56.1 -q q12 -e 12 # 连到192.168.56.1、队列名q12、从第12层退出
-docker run --rm -it yindaheng98/dnet-computationunit python ComputationUnit -a 192.168.56.1 -q q16 -e 16 # 连到192.168.56.1、队列名q16、从第16层退出
+docker run --rm -dit --name rabbitmq rabbitmq:alpine
+docker run --rm -it --name cu8 --net=container:rabbitmq yindaheng98/dnet-computationunit python ComputationUnit -q q8 -e 8 # 队列名q8、从第8层退出
+docker run --rm -it --name cu12 --net=container:rabbitmq yindaheng98/dnet-computationunit python ComputationUnit -q q12 -e 12 # 队列名q12、从第12层退出
+docker run --rm -it --name cu16 --net=container:rabbitmq yindaheng98/dnet-computationunit python ComputationUnit -q q16 -e 16 # 队列名q16、从第16层退出
+```
+
+停止运行：
+
+```sh
+docker stop cu8
+docker stop cu12
+docker stop cu16
 ```
 
 ## 运行传输层
@@ -123,9 +131,17 @@ npm run start -- -l 0.0.0.0:8080 -a amqp://192.168.1.2 -q q8 -n localhost:8081
 Dockerhub地址是[yindaheng98/dnet-transmissionunit](https://hub.docker.com/repository/docker/yindaheng98/dnet-transmissionunit)。运行指令同上。
 
 ```sh
-docker run --rm -it -p 8082:8080 yindaheng98/dnet-transmissionunit npm run start -- -a amqp://192.168.56.1 -q q16
-docker run --rm -it -p 8081:8080 yindaheng98/dnet-transmissionunit npm run start -- -a amqp://192.168.56.1 -q q12 -n 192.168.56.1:8082
-docker run --rm -it -p 8080:8080 yindaheng98/dnet-transmissionunit npm run start -- -a amqp://192.168.56.1 -q q8 -n 192.168.56.1:8081
+docker run --rm -it --name tu16 --net=host -p 8082:8080 yindaheng98/dnet-transmissionunit npm run start -- -l 0.0.0.0:8082 -q q16
+docker run --rm -it --name tu12 --net=host -p 8081:8080 yindaheng98/dnet-transmissionunit npm run start -- -l 0.0.0.0:8081 -q q12 -n localhost:8082
+docker run --rm -it --name tu8 --net=host -p 8080:8080 yindaheng98/dnet-transmissionunit npm run start -- -l 0.0.0.0:8080 -q q8 -n localhost:8081
+```
+
+停止运行：
+
+```sh
+docker stop tu8
+docker stop tu12
+docker stop tu16
 ```
 
 ## 运行测试
@@ -166,7 +182,7 @@ python TransmissionUnit.test.py -a localhost:8080
 Dockerhub地址是[yindaheng98/dnet-testunit](https://hub.docker.com/repository/docker/yindaheng98/dnet-testunit)。运行指令同上。
 
 ```sh
-docker run --rm -it yindaheng98/dnet-testunit python TransmissionUnit.test.py -a 192.168.56.1:8080
+docker run --rm -it --name t yindaheng98/dnet-testunit python TransmissionUnit.test.py -a 192.168.56.1:8080
 ```
 
 ## K8S部署示例
