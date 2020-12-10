@@ -143,7 +143,7 @@ Options:
                         要测试服务器地址和端口
   -n NUMBER, --number=NUMBER
                         测试多少张图片
-  -e EXIT, --exit=EXIT  在第几层退出
+  -e EXIT, --exit=EXIT  在第几层退出, 默认为0表示原图直接发服务器
 ```
 
 #### 示例
