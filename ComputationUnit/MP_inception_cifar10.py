@@ -35,7 +35,7 @@ class Inception_v3_cifar10(nn.Module):
         self.fc = nn.Linear(2048, num_classes)
         self.exits = make_exits(exits, exits_num=15)
 
-    def forward(self, x, edge_exit, start_layer=1):
+    def forward(self, x, edge_exit, start_layer=0):
         if self.transform_input:
             x = x.clone()
             x[:, 0] = x[:, 0] * (0.229 / 0.5) + (0.485 - 0.5) / 0.5

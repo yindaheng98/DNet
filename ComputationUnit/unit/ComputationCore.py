@@ -58,6 +58,6 @@ class ComputationCore(object):
 
         # 终端出口小于16且置信度低于阈值则发往云端
         if x is not False and prob.tolist()[0] < self.thres[exit_layer-1]:
-            return False, (x, exit_layer + 1)
+            return False, (x, exit_layer)
         # 否则返回识别结果
         return True, category

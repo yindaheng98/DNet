@@ -8,6 +8,7 @@ import torch
 import time
 import os
 import sys
+import pickle
 sys.path.append(os.path.split(__file__)[0])
 
 # Multi-exit Inception v3
@@ -23,7 +24,7 @@ parser.add_option('-a', '--address', dest='address',
 parser.add_option('-n', '--number', dest='number',
                     type='int', help='测试多少张图片', default='100')
 parser.add_option('-e', '--exit', dest='exit',
-                    type='int', help='在第几层退出', default='4')
+                    type='int', help='在第几层退出, 默认为0表示原图直接发服务器', default='0')
 options, _ = parser.parse_args()
 print("对%s进行%d张图片的测试，在第%d层退出"%(options.address, options.number, options.exit))
 
@@ -62,17 +63,18 @@ if __name__ == "__main__":
 
         # 终端出口小于16且置信度低于阈值则发往边缘
         if inter_data is False:
-            print("inter_data is False, don't send, category=%s"%category)
+            print("inter_data is False, 不发送, category=%s"%category)
         elif prob.tolist()[0] < thres[device_exit-1]:
-            print('prob=%f<%f, Send to %s' % (prob.tolist()[0], thres[device_exit-1], options.address))
+            print('prob=%f<%f, 发送到 %s' % (prob.tolist()[0], thres[device_exit-1], options.address))
             print('正在查询队列状态......')
             status = client.Qstatus()
             print('当前服务器中队列长度为%d, 有%d个计算层单元' % (status.qlength, status.consumer))
             print('正在发送计算请求......')
             response = client.Compute(inter_data, device_exit)
-            print('收到计算结果%s'%str(response)[0:40])
+            category = pickle.loads(response.result)
+            print('收到计算结果%s'%str(category))
         else:
-            print('prob=%f>%f, category=%s' % (prob.tolist()[0], thres[device_exit-1], category))
+            print('prob=%f>%f, category=%s, 不发送' % (prob.tolist()[0], thres[device_exit-1], category))
         if i > options.number:
             break
     
