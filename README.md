@@ -182,7 +182,7 @@ python TransmissionUnit.test.py -a localhost:8080
 Dockerhub地址是[yindaheng98/dnet-testunit](https://hub.docker.com/repository/docker/yindaheng98/dnet-testunit)。运行指令同上。
 
 ```sh
-docker run --rm -it --name t yindaheng98/dnet-testunit python TransmissionUnit.test.py -a 192.168.56.1:8080
+docker run --rm -it --name test --net=host yindaheng98/dnet-testunit python TransmissionUnit.test.py -a localhost:8080
 ```
 
 ## K8S部署示例
