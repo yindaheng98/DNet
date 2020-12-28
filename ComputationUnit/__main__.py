@@ -17,7 +17,9 @@ import optparse
 def main():  # 在启动时从命令行或者系统变量中获取MQ系统的IP地址端口号，默认localhost
     parser = optparse.OptionParser()
     parser.add_option('-a', '--address', dest='address',
-                      type='string', help='要连接的RabbitMQ服务器地址和端口', default='localhost')
+                      type='string', help='要连接的RabbitMQ服务器地址', default='localhost')
+    parser.add_option('-p', '--port', dest='port',
+                      type='int', help='要连接的RabbitMQ服务器端口', default=5672)
     parser.add_option('-q', '--queuename', dest='queuename',
                       type='string', help='接收计算请求的RabbitMQ队列名', default='ComputationQueue')
     parser.add_option('-e', '--exitlayer', dest='exitlayer',
@@ -37,7 +39,7 @@ def main():  # 在启动时从命令行或者系统变量中获取MQ系统的IP�
              0.92, 0.90, 0.90, 0.90, 0.90]
 
     print(' [x] RabbitMQ: connecting to %s' % options.address)
-    conn_params = pika.ConnectionParameters(host=options.address)
+    conn_params = pika.ConnectionParameters(host=options.address, port=options.port)
     print(' [x] RabbitMQ: queue name is %s' % options.queuename)
 
     print('Inception will exit at layer %d ..........' % options.exitlayer)

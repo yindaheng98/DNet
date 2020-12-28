@@ -6,7 +6,7 @@ program
     .option('-a, --amqp-address <amqp-address>', '与计算层通讯的RabbitMQ服务器接口地址', 'amqp://localhost')
     .option('-q, --queue-name <queue-name>', '与计算层通讯的RabbitMQ队列名称', 'ComputationQueue')
     .option('-n, --next-address <next-address>', '如果此服务器运行在边缘，此处指定下一套模型（云端）的gRPC服务器位置', '')
-    .option('-d, --delay <delay>', '(测试用)当结果到达后，延迟多少毫秒再发回，用于模拟传输延迟', '');
+    .option('-d, --delay <delay>', '(测试用)当结果到达后，延迟多少毫秒再发回，用于模拟传输延迟', 0);
 
 async function main() {
     program.parse(process.argv);

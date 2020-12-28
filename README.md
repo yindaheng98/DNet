@@ -53,7 +53,8 @@ Usage: ComputationUnit [options]
 Options:
   -h, --help            show this help message and exit
   -a ADDRESS, --address=ADDRESS
-                        要连接的RabbitMQ服务器地址和端口
+                        要连接的RabbitMQ服务器地址
+  -p PORT, --port=PORT  要连接的RabbitMQ服务器端口
   -q QUEUENAME, --queuename=QUEUENAME
                         接收计算请求的RabbitMQ队列名
   -e EXITLAYER, --exitlayer=EXITLAYER
@@ -115,6 +116,7 @@ Options:
   -a, --amqp-address <amqp-address>      与计算层通讯的RabbitMQ服务器接口地址 (default: "amqp://localhost")
   -q, --queue-name <queue-name>          与计算层通讯的RabbitMQ队列名称 (default: "ComputationQueue")
   -n, --next-address <next-address>      如果此服务器运行在边缘，此处指定下一套模型（云端）的gRPC服务器位置 (default: "")
+  -d, --delay <delay>                    (测试用)当结果到达后，延迟多少毫秒再发回，用于模拟传输延迟 (default: "")
   -h, --help                             display help for command
 ```
 
