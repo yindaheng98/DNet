@@ -9,7 +9,7 @@ var cu_Client = require("./ComputationUnitClient");
  * @param next_addr 如果返回“计算未完成”，应该向哪个服务发起进一步的请求
  * @return 一个函数，严格遵循gRPC的请求处理函数标准格式
  */
-module.exports = async function Computer(amqp_addr, queue_name, next_addr) {
+module.exports = async function Computer(amqp_addr, queue_name, next_addr, delay = 0) {
     var to_next = (typeof next_addr === "string" && next_addr.length > 0);//没有输入next_addr说明不需要发送到下一个
     var rpc_client = null;//不需要发送下一个所以也就不需要RPC客户端
     if (to_next) rpc_client = rpc_Client(next_addr);
@@ -30,7 +30,11 @@ module.exports = async function Computer(amqp_addr, queue_name, next_addr) {
                 rpc_client.compute(request, function (err, response) {//发到下一个边缘
                     if (err) console.error(err);
                     console.log("[计算结果来自" + next_addr + "] " + request.toString().substring(0, 10) + "......")
-                    callback(null, response);
+                    if (delay !== 0) {
+                        console.log("[延迟" + delay + "毫秒]")
+                        setTimeout(() => callback(null, response), delay)
+                    }
+                    else callback(null, response);
                 })
                 return;
             }
